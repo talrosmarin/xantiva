@@ -148,6 +148,11 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 /* 04 creative: the four posts as they go out */
 .posts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,1.4vw,18px);margin-top:clamp(40px,5vw,72px)}
 .post{display:flex;flex-direction:column;gap:12px;min-width:0}
+/* creative orbit: the posts ride a clockwise ellipse; drag to spin faster */
+.orbit{position:relative;height:clamp(460px,56vw,760px);margin-top:clamp(40px,5vw,72px);touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+.orbit.drag{cursor:grabbing}
+.orbit .post{position:absolute;left:0;top:0;width:clamp(150px,17vw,250px);will-change:transform}
+.orbit .post img{box-shadow:0 18px 40px rgba(0,0,0,.28);pointer-events:none;-webkit-user-drag:none}
 .post img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:4px;background:var(--green-deep)}
 .post figcaption{display:flex;flex-direction:column;gap:2px;font-size:15px}
 .post figcaption b{font-weight:500}
@@ -336,7 +341,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
       <h2>Creative</h2>
       <p class="lede">Real training, natural light and film grain. One look for every photo and video the club puts out.</p>
     </div>
-    <div class="posts">
+    <div class="orbit" id="orbit" aria-label="Creative posts, drag to spin">
       <figure class="post"><img src="img/post-03_freeze.jpg" alt="Post: Freeze your excuses, ice bath" loading="lazy"></figure>
       <figure class="post"><img src="img/post-04_less-talk.jpg" alt="Post: Less talk. More reps., pull-up" loading="lazy"></figure>
       <figure class="post"><img src="img/post-02_mat-wordmark-v2.jpg" alt="Post: woman training on a mat with the Xantiva logo" loading="lazy"></figure>
@@ -404,6 +409,41 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 </main>
 
 <script>
+(function(){
+  var o=document.getElementById('orbit'); if(!o) return;
+  var items=[].slice.call(o.querySelectorAll('.post')), n=items.length;
+  var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var base=still?0:0.25, speed=base, angle=0, last=performance.now(), on=true;
+  var dragging=false, px=0, py=0, lastMove=0;
+  function layout(){
+    var W=o.clientWidth, H=o.clientHeight, w=items[0].offsetWidth, h=w*1.25;
+    var rx=(W-w)/2, ry=(H-h)/2, cx=W/2, cy=H/2;
+    items.forEach(function(el,i){
+      var a=angle+i*2*Math.PI/n, sn=Math.sin(a);
+      var sc=0.78+0.22*(sn+1)/2;
+      el.style.transform='translate('+(cx+rx*Math.cos(a)-w/2)+'px,'+(cy+ry*sn-h/2)+'px) scale('+sc.toFixed(3)+')';
+      el.style.zIndex=Math.round((sn+1)*50);
+    });
+  }
+  function tick(t){
+    var dt=Math.min(0.05,(t-last)/1000); last=t;
+    if(!dragging){ speed+=(base-speed)*Math.min(1,dt*1.6); angle+=speed*dt; }
+    layout(); if(on) requestAnimationFrame(tick);
+  }
+  new IntersectionObserver(function(e){ var v=e[0].isIntersecting; if(v&&!on){ on=true; last=performance.now(); requestAnimationFrame(tick); } on=v; }).observe(o);
+  o.addEventListener('pointerdown',function(e){ dragging=true; px=e.clientX; py=e.clientY; lastMove=performance.now(); o.classList.add('drag'); o.setPointerCapture(e.pointerId); });
+  o.addEventListener('pointermove',function(e){
+    if(!dragging) return;
+    var r=o.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+    var a0=Math.atan2((py-cy)/r.height,(px-cx)/r.width), a1=Math.atan2((e.clientY-cy)/r.height,(e.clientX-cx)/r.width);
+    var d=a1-a0; if(d>Math.PI) d-=2*Math.PI; if(d<-Math.PI) d+=2*Math.PI;
+    var now=performance.now(), dt=Math.max(0.008,(now-lastMove)/1000);
+    angle+=d; speed=Math.max(-8,Math.min(8,d/dt)); px=e.clientX; py=e.clientY; lastMove=now;
+  });
+  function end(){ dragging=false; o.classList.remove('drag'); if(Math.abs(speed)<base) speed=base; }
+  o.addEventListener('pointerup',end); o.addEventListener('pointercancel',end);
+  addEventListener('resize',layout); layout(); requestAnimationFrame(tick);
+})();
 (function(){
   var t=document.getElementById('merch-track'); if(!t) return;
   document.querySelectorAll('.car-btn').forEach(function(b){ b.addEventListener('click',function(){
