@@ -199,7 +199,49 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 .igx .b1{left:-3px;top:16%;height:28px;border-radius:2px 0 0 2px}
 .igx .b2{left:-3px;top:24%;height:46px;border-radius:2px 0 0 2px}
 .igx .b3{right:-3px;top:22%;height:60px;border-radius:0 2px 2px 0}
-/* 06 included: word, symbol, word */
+/* 06 the sound: brand playlists and a now-playing card */
+.sound-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(24px,4vw,56px);align-items:center;margin-top:clamp(40px,5vw,72px)}
+.pls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(10px,1.4vw,18px)}
+.pl{margin:0;display:flex;flex-direction:column;gap:12px;min-width:0}
+.pl figcaption{display:flex;flex-direction:column;gap:2px;font-size:14px}
+.pl figcaption b{font-weight:500}
+.pl figcaption span{color:var(--cream-dim)}
+.cover{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;padding:clamp(12px,1.4vw,18px);display:flex;flex-direction:column;justify-content:flex-end;box-shadow:inset 0 0 0 1px rgba(241,230,207,.14)}
+.cover .c-sym{position:absolute;right:-12%;top:-10%;width:72%;opacity:.9}
+.cover .c-sym svg{width:100%}
+.cover .c-name{font-weight:700;text-transform:uppercase;font-size:clamp(18px,2.2vw,30px);line-height:.9;letter-spacing:-.01em}
+.cover .c-by{font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.7;margin-top:6px}
+.player{background:#16221A;border:1px solid var(--cream-line);border-radius:22px;padding:clamp(16px,1.8vw,22px);box-shadow:0 30px 60px -24px rgba(0,0,0,.5);max-width:400px;width:100%;justify-self:center}
+.pl-top{display:flex;justify-content:space-between;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cream-dim);margin-bottom:14px}
+.cover.big .c-name{font-size:clamp(26px,3vw,40px)}
+.np{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:16px}
+.np b{display:block;font-weight:500;font-size:18px}
+.np span{color:var(--cream-dim);font-size:14px}
+.eq{display:flex;align-items:flex-end;gap:3px;height:18px}
+.eq i{display:block;width:3px;height:100%;background:var(--cream);border-radius:2px;transform-origin:bottom;animation:eq 1s ease-in-out infinite}
+.eq i:nth-child(2){animation-delay:-.3s}.eq i:nth-child(3){animation-delay:-.6s}.eq i:nth-child(4){animation-delay:-.15s}
+@keyframes eq{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+.player.paused .eq i{animation-play-state:paused}
+.bar{height:4px;border-radius:4px;background:rgba(241,230,207,.16);margin-top:14px;overflow:hidden}
+.bar .fill{height:100%;width:28%;background:var(--cream);border-radius:4px}
+.times{display:flex;justify-content:space-between;font-size:11px;color:var(--cream-dim);margin-top:6px;font-variant-numeric:tabular-nums}
+.ctrls{display:flex;justify-content:center;align-items:center;gap:22px;margin-top:8px}
+.c-btn{background:none;border:0;color:var(--cream);padding:6px;cursor:pointer;display:grid;place-items:center}
+.c-btn.play{width:56px;height:56px;border-radius:50%;background:var(--cream);color:var(--green)}
+.c-btn.play .i-play{display:none}
+.player.paused .c-btn.play .i-play{display:block}
+.player.paused .c-btn.play .i-pause{display:none}
+.tracks{list-style:none;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--cream-line);display:grid;gap:8px}
+.tracks li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:8px;font-size:13px;color:var(--cream-dim)}
+.tracks li em{font-style:normal;font-variant-numeric:tabular-nums}
+.tracks li b{font-weight:500;color:var(--cream);margin-right:6px}
+.tracks li.on b,.tracks li.on em{color:var(--cream)}
+.on-apps{display:flex;gap:8px;margin-top:14px}
+.on-apps span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--cream-line);border-radius:999px;padding:6px 10px;color:var(--cream-dim)}
+@media (max-width:860px){.sound-grid{grid-template-columns:minmax(0,1fr)}.player{max-width:none}}
+@media (max-width:640px){.pls{gap:8px}.pls .cover{padding:9px}.pls .cover .c-name{font-size:13px}.pls .cover .c-by{display:none}.pls .cover .c-sym{width:58%;right:-14%;top:-12%}.pl figcaption{font-size:12px}}
+@media (prefers-reduced-motion:reduce){.eq i{animation:none}}
+/* 07 included: word, symbol, word */
 .pairs{margin-top:clamp(48px,6vw,88px);display:grid;border-top:1px solid var(--ink-line)}
 .pair{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:clamp(14px,3vw,44px);padding-block:clamp(14px,2vw,24px);border-bottom:1px solid var(--ink-line)}
 .pair span{font-size:clamp(26px,5.4vw,76px);font-weight:700;text-transform:uppercase;line-height:1;letter-spacing:-.02em;color:var(--green);min-width:0;overflow-wrap:anywhere}
@@ -345,7 +387,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 
 <section class="off">
   <div class="wrap">
-    <span class="bib"><b>01</b> / 07</span>
+    <span class="bib"><b>01</b> / 08</span>
     <div class="head">
       <h2>The identity</h2>
       <p class="lede">A complete visual system, ready for signs, shirts and screens.</p>
@@ -368,7 +410,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 
 <section>
   <div class="wrap band-head">
-    <div class="bib-r"><span class="bib"><b>02</b> / 07</span></div>
+    <div class="bib-r"><span class="bib"><b>02</b> / 08</span></div>
     <div class="head flip">
       <h2>In the club</h2>
       <p class="lede">On the building, the equipment and the team.</p>
@@ -383,7 +425,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 
 <section class="light">
   <div class="wrap">
-    <span class="bib"><b>03</b> / 07</span>
+    <span class="bib"><b>03</b> / 08</span>
     <div class="head">
       <h2>Merch</h2>
       <p class="lede">Pieces members actually want to wear, in the gym and around the island.</p>
@@ -403,7 +445,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 
 <section>
   <div class="wrap">
-    <span class="bib"><b>04</b> / 07</span>
+    <span class="bib"><b>04</b> / 08</span>
     <div class="head">
       <h2>Creative</h2>
       <p class="lede">Real training, natural light and film grain. One look for every photo and video the club puts out.</p>
@@ -426,7 +468,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 
 <section class="deep igx" id="igx">
   <div class="wrap">
-    <span class="bib"><b>05</b> / 07</span>
+    <span class="bib"><b>05</b> / 08</span>
     <div class="head">
       <h2>On<br>Instagram</h2>
       <p class="lede">A feed that looks like one brand from the first scroll.</p>
@@ -442,9 +484,40 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
   </div>
 </section>
 
+<section class="sound" id="sound">
+  <div class="wrap">
+    <span class="bib"><b>06</b> / 08</span>
+    <div class="head">
+      <h2>The sound</h2>
+      <p class="lede">Music is part of the club. Three playlists, one for every part of the day.</p>
+    </div>
+    <div class="sound-grid">
+      <div class="pls">
+        <figure class="pl"><div class="cover" style="background:#F1E6CF;color:#1F2E24"><span class="c-sym"><svg viewBox="688 522 686 741" fill="currentColor" aria-hidden="true"><path d="M 787.2 525.3 C 808.6 522.3 839.8 531.5 858.2 542.6 C 966.9 608.1 990.7 743.6 1044.2 847.4 C 1090.0 936.4 1173.0 1014.5 1265 1053.4 C 1283.8 1061.3 1314.3 1071.7 1329.3 1082.8 C 1349.3 1097.6 1362.6 1119.7 1366.4 1144.2 C 1374.7 1200.8 1337.7 1246.2 1281.9 1254.1 C 1204.6 1263.7 1143.8 1191.2 1110.5 1130.4 C 1080.5 1075.7 1064.8 1034.6 1048.8 993.9 C 1003.2 877.5 919.3 784.7 806.5 730.4 C 783.6 719.4 755.9 712.8 734.6 696.3 C 692.4 663.7 688.2 600.2 720.9 559.3 C 738.5 537.5 759.8 528.3 787.2 525.3 z"/><path d="M 1254.64 526.369 C 1298.27 522.22 1335.96 549.87 1338.37 595.154 C 1341.19 625.62 1330.98 642.829 1308.91 663.131 C 1276.68 692.771 1244.23 723.561 1212.84 754.258 C 1194.13 772.549 1174.25 790.363 1157.29 810.446 C 1149.05 820.646 1140.49 832.172 1126.98 835.488 C 1111.52 839.283 1100.04 828.749 1098.27 813.613 C 1094.17 778.613 1125.25 757.697 1143.46 732.954 C 1162.2 707.492 1170.99 673.004 1176.29 642.338 C 1181.43 611.755 1179.55 581.296 1199.96 555.703 C 1214.95 536.896 1231.44 529.208 1254.64 526.369 z"/><path d="M 949.097 956.254 C 960.303 956.241 969.654 962.46 971.967 973.851 C 980.705 1016.88 935.877 1040.79 920.62 1075.65 C 912.104 1095.11 907.064 1116.56 903.522 1137.46 C 898.81 1164.47 899.447 1194.59 885.544 1218.39 C 876.111 1234.9 860.343 1246.84 841.892 1251.45 C 820.303 1257.04 798.55 1254.82 779.288 1243.48 C 778.5 1242.98 777.72 1242.47 776.948 1241.95 C 742.304 1218.37 732.516 1171.23 756.142 1136.05 C 760.344 1129.79 766.269 1124.45 771.605 1119.13 C 800.715 1090.07 831.111 1062.27 860.51 1033.51 C 875.144 1019.02 889.703 1004.45 904.185 989.8 C 917.82 975.993 929.341 959.984 949.097 956.254 z"/></svg></span><span class="c-name">Train</span><span class="c-by">Xantiva · Playlist</span></div><figcaption><b>Train</b><span>Warm-up to the last set</span></figcaption></figure>
+        <figure class="pl"><div class="cover" style="background:#1F2E24;color:#F1E6CF"><span class="c-sym"><svg viewBox="688 522 686 741" fill="currentColor" aria-hidden="true"><path d="M 787.2 525.3 C 808.6 522.3 839.8 531.5 858.2 542.6 C 966.9 608.1 990.7 743.6 1044.2 847.4 C 1090.0 936.4 1173.0 1014.5 1265 1053.4 C 1283.8 1061.3 1314.3 1071.7 1329.3 1082.8 C 1349.3 1097.6 1362.6 1119.7 1366.4 1144.2 C 1374.7 1200.8 1337.7 1246.2 1281.9 1254.1 C 1204.6 1263.7 1143.8 1191.2 1110.5 1130.4 C 1080.5 1075.7 1064.8 1034.6 1048.8 993.9 C 1003.2 877.5 919.3 784.7 806.5 730.4 C 783.6 719.4 755.9 712.8 734.6 696.3 C 692.4 663.7 688.2 600.2 720.9 559.3 C 738.5 537.5 759.8 528.3 787.2 525.3 z"/><path d="M 1254.64 526.369 C 1298.27 522.22 1335.96 549.87 1338.37 595.154 C 1341.19 625.62 1330.98 642.829 1308.91 663.131 C 1276.68 692.771 1244.23 723.561 1212.84 754.258 C 1194.13 772.549 1174.25 790.363 1157.29 810.446 C 1149.05 820.646 1140.49 832.172 1126.98 835.488 C 1111.52 839.283 1100.04 828.749 1098.27 813.613 C 1094.17 778.613 1125.25 757.697 1143.46 732.954 C 1162.2 707.492 1170.99 673.004 1176.29 642.338 C 1181.43 611.755 1179.55 581.296 1199.96 555.703 C 1214.95 536.896 1231.44 529.208 1254.64 526.369 z"/><path d="M 949.097 956.254 C 960.303 956.241 969.654 962.46 971.967 973.851 C 980.705 1016.88 935.877 1040.79 920.62 1075.65 C 912.104 1095.11 907.064 1116.56 903.522 1137.46 C 898.81 1164.47 899.447 1194.59 885.544 1218.39 C 876.111 1234.9 860.343 1246.84 841.892 1251.45 C 820.303 1257.04 798.55 1254.82 779.288 1243.48 C 778.5 1242.98 777.72 1242.47 776.948 1241.95 C 742.304 1218.37 732.516 1171.23 756.142 1136.05 C 760.344 1129.79 766.269 1124.45 771.605 1119.13 C 800.715 1090.07 831.111 1062.27 860.51 1033.51 C 875.144 1019.02 889.703 1004.45 904.185 989.8 C 917.82 975.993 929.341 959.984 949.097 956.254 z"/></svg></span><span class="c-name">Recover</span><span class="c-by">Xantiva · Playlist</span></div><figcaption><b>Recover</b><span>Sauna, ice bath, slow breath</span></figcaption></figure>
+        <figure class="pl"><div class="cover" style="background:#111111;color:#F1E6CF"><span class="c-sym"><svg viewBox="688 522 686 741" fill="currentColor" aria-hidden="true"><path d="M 787.2 525.3 C 808.6 522.3 839.8 531.5 858.2 542.6 C 966.9 608.1 990.7 743.6 1044.2 847.4 C 1090.0 936.4 1173.0 1014.5 1265 1053.4 C 1283.8 1061.3 1314.3 1071.7 1329.3 1082.8 C 1349.3 1097.6 1362.6 1119.7 1366.4 1144.2 C 1374.7 1200.8 1337.7 1246.2 1281.9 1254.1 C 1204.6 1263.7 1143.8 1191.2 1110.5 1130.4 C 1080.5 1075.7 1064.8 1034.6 1048.8 993.9 C 1003.2 877.5 919.3 784.7 806.5 730.4 C 783.6 719.4 755.9 712.8 734.6 696.3 C 692.4 663.7 688.2 600.2 720.9 559.3 C 738.5 537.5 759.8 528.3 787.2 525.3 z"/><path d="M 1254.64 526.369 C 1298.27 522.22 1335.96 549.87 1338.37 595.154 C 1341.19 625.62 1330.98 642.829 1308.91 663.131 C 1276.68 692.771 1244.23 723.561 1212.84 754.258 C 1194.13 772.549 1174.25 790.363 1157.29 810.446 C 1149.05 820.646 1140.49 832.172 1126.98 835.488 C 1111.52 839.283 1100.04 828.749 1098.27 813.613 C 1094.17 778.613 1125.25 757.697 1143.46 732.954 C 1162.2 707.492 1170.99 673.004 1176.29 642.338 C 1181.43 611.755 1179.55 581.296 1199.96 555.703 C 1214.95 536.896 1231.44 529.208 1254.64 526.369 z"/><path d="M 949.097 956.254 C 960.303 956.241 969.654 962.46 971.967 973.851 C 980.705 1016.88 935.877 1040.79 920.62 1075.65 C 912.104 1095.11 907.064 1116.56 903.522 1137.46 C 898.81 1164.47 899.447 1194.59 885.544 1218.39 C 876.111 1234.9 860.343 1246.84 841.892 1251.45 C 820.303 1257.04 798.55 1254.82 779.288 1243.48 C 778.5 1242.98 777.72 1242.47 776.948 1241.95 C 742.304 1218.37 732.516 1171.23 756.142 1136.05 C 760.344 1129.79 766.269 1124.45 771.605 1119.13 C 800.715 1090.07 831.111 1062.27 860.51 1033.51 C 875.144 1019.02 889.703 1004.45 904.185 989.8 C 917.82 975.993 929.341 959.984 949.097 956.254 z"/></svg></span><span class="c-name">Connect</span><span class="c-by">Xantiva · Playlist</span></div><figcaption><b>Connect</b><span>Sunset sessions with the crew</span></figcaption></figure>
+      </div>
+      <div class="player" id="player">
+        <div class="pl-top"><span>Now playing</span><span>Recover</span></div>
+        <div class="cover big" style="background:#1F2E24;color:#F1E6CF"><span class="c-sym"><svg viewBox="688 522 686 741" fill="currentColor" aria-hidden="true"><path d="M 787.2 525.3 C 808.6 522.3 839.8 531.5 858.2 542.6 C 966.9 608.1 990.7 743.6 1044.2 847.4 C 1090.0 936.4 1173.0 1014.5 1265 1053.4 C 1283.8 1061.3 1314.3 1071.7 1329.3 1082.8 C 1349.3 1097.6 1362.6 1119.7 1366.4 1144.2 C 1374.7 1200.8 1337.7 1246.2 1281.9 1254.1 C 1204.6 1263.7 1143.8 1191.2 1110.5 1130.4 C 1080.5 1075.7 1064.8 1034.6 1048.8 993.9 C 1003.2 877.5 919.3 784.7 806.5 730.4 C 783.6 719.4 755.9 712.8 734.6 696.3 C 692.4 663.7 688.2 600.2 720.9 559.3 C 738.5 537.5 759.8 528.3 787.2 525.3 z"/><path d="M 1254.64 526.369 C 1298.27 522.22 1335.96 549.87 1338.37 595.154 C 1341.19 625.62 1330.98 642.829 1308.91 663.131 C 1276.68 692.771 1244.23 723.561 1212.84 754.258 C 1194.13 772.549 1174.25 790.363 1157.29 810.446 C 1149.05 820.646 1140.49 832.172 1126.98 835.488 C 1111.52 839.283 1100.04 828.749 1098.27 813.613 C 1094.17 778.613 1125.25 757.697 1143.46 732.954 C 1162.2 707.492 1170.99 673.004 1176.29 642.338 C 1181.43 611.755 1179.55 581.296 1199.96 555.703 C 1214.95 536.896 1231.44 529.208 1254.64 526.369 z"/><path d="M 949.097 956.254 C 960.303 956.241 969.654 962.46 971.967 973.851 C 980.705 1016.88 935.877 1040.79 920.62 1075.65 C 912.104 1095.11 907.064 1116.56 903.522 1137.46 C 898.81 1164.47 899.447 1194.59 885.544 1218.39 C 876.111 1234.9 860.343 1246.84 841.892 1251.45 C 820.303 1257.04 798.55 1254.82 779.288 1243.48 C 778.5 1242.98 777.72 1242.47 776.948 1241.95 C 742.304 1218.37 732.516 1171.23 756.142 1136.05 C 760.344 1129.79 766.269 1124.45 771.605 1119.13 C 800.715 1090.07 831.111 1062.27 860.51 1033.51 C 875.144 1019.02 889.703 1004.45 904.185 989.8 C 917.82 975.993 929.341 959.984 949.097 956.254 z"/></svg></span><span class="c-name">Recover</span><span class="c-by">Xantiva · Playlist</span></div>
+        <div class="np"><div><b>Innerbloom</b><span>RÜFÜS DU SOL</span></div><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>
+        <div class="bar"><div class="fill" id="pl-fill"></div></div>
+        <div class="times"><span id="pl-t">2:41</span><span>9:38</span></div>
+        <div class="ctrls">
+          <button type="button" class="c-btn" aria-label="Previous track"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M6 5h2v14H6zM20 5v14L9.5 12z"/></svg></button>
+          <button type="button" class="c-btn play" id="pl-play" aria-label="Pause"><svg class="i-pause" viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg><svg class="i-play" viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          <button type="button" class="c-btn" aria-label="Next track"><svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M16 5h2v14h-2zM4 5v14l10.5-7z"/></svg></button>
+        </div>
+        <ol class="tracks"><li class="on"><em>01</em><div><b>Innerbloom</b><span>RÜFÜS DU SOL</span></div></li><li class=""><em>02</em><div><b>Kerala</b><span>Bonobo</span></div></li><li class=""><em>03</em><div><b>Tearing Me Up</b><span>Bob Moses</span></div></li><li class=""><em>04</em><div><b>A Moment Apart</b><span>ODESZA</span></div></li><li class=""><em>05</em><div><b>Awake</b><span>Tycho</span></div></li></ol>
+        <div class="on-apps"><span>Spotify</span><span>Apple Music</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="light">
   <div class="wrap">
-    <span class="bib"><b>06</b> / 07</span>
+    <span class="bib"><b>07</b> / 08</span>
     <div class="head">
       <h2>What's included</h2>
       <p class="lede">Everything needed to launch the new look.</p>
@@ -463,7 +536,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 <section class="more" id="more">
   <div class="more-pin">
     <div class="wrap">
-      <div class="bib-r"><span class="bib"><b>07</b> / 07</span></div>
+      <div class="bib-r"><span class="bib"><b>08</b> / 08</span></div>
       <div class="head flip">
         <h2>More we can do</h2>
         <p class="lede">The next steps, whenever you're ready.</p>
@@ -494,6 +567,15 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 </main>
 
 <script>
+(function(){
+  var pl=document.getElementById('player'), btn=document.getElementById('pl-play'), fill=document.getElementById('pl-fill'), tEl=document.getElementById('pl-t'); if(!pl) return;
+  var total=578, pos=161, playing=!matchMedia('(prefers-reduced-motion: reduce)').matches, last=performance.now();
+  if(!playing) pl.classList.add('paused');
+  function fmt(x){ x=Math.floor(x); return Math.floor(x/60)+':'+String(x%60).padStart(2,'0'); }
+  function tick(now){ var dt=(now-last)/1000; last=now; if(playing){ pos=(pos+dt)%total; fill.style.width=(pos/total*100).toFixed(2)+'%'; tEl.textContent=fmt(pos); } requestAnimationFrame(tick); }
+  btn.addEventListener('click',function(){ playing=!playing; pl.classList.toggle('paused',!playing); btn.setAttribute('aria-label',playing?'Pause':'Play'); });
+  requestAnimationFrame(tick);
+})();
 (function(){
   var sec=document.getElementById('more'), wheel=document.getElementById('wheel'); if(!wheel) return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
