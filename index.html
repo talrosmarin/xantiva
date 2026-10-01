@@ -65,7 +65,10 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 .stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .fallback{position:absolute;left:50%;top:39.5%;width:26cqw;transform:translate(-50%,-50%);color:var(--cream)}
 .fallback svg{width:100%}
-.stage.live .fallback{display:none}
+.fallback{display:none}
+.stage.nogl .fallback{display:block}
+.stage canvas{opacity:0;transition:opacity .9s ease}
+.stage.live canvas{opacity:1}
 .stage-type{position:absolute;left:0;right:0;top:56.8%;text-align:center;color:var(--cream)}
 .st-wm{width:55.6cqw;margin:0 auto}
 .st-wm svg{width:100%;color:var(--cream)}
@@ -742,9 +745,11 @@ try {
     pivot.position.y = 95 + 18 * Math.sin((t / 10) * Math.PI * 4);
     renderer.render(scene, cam);
   };
-  draw(0.6); stage.classList.add('live');
-  if (!still) renderer.setAnimationLoop(() => { if (!window.__xPause) draw((performance.now() / 1000) % 10); });
-} catch (e) { /* no WebGL: the flat symbol stays */ }
+  const t0 = performance.now();
+  draw(0.6);
+  requestAnimationFrame(() => stage.classList.add('live'));
+  if (!still) renderer.setAnimationLoop(() => { if (!window.__xPause) draw((0.6 + (performance.now() - t0) / 1000) % 10); });
+} catch (e) { stage.classList.add('nogl'); }
 </script>
 </body>
 </html>
