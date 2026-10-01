@@ -226,6 +226,21 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 .list li b{font-weight:500;font-size:clamp(20px,2vw,26px);color:var(--green)}
 
 /* 07 more */
+/* 07: a wheel of cards that turns as you scroll; the slide stays pinned while it turns */
+.more{height:300vh;padding:0}
+.more-pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;flex-direction:column;padding-top:clamp(56px,8vw,110px)}
+.wheel-wrap{position:relative;flex:1;--R:1150px;--cw:340px;--ch:380px}
+.wheel{position:absolute;left:50%;top:calc(52% + var(--R));width:0;height:0}
+.wcard{position:absolute;width:var(--cw);height:var(--ch);left:calc(var(--cw) / -2);top:calc(var(--ch) / -2);background:#24352A;will-change:transform,opacity;backface-visibility:hidden}
+.wcard:nth-child(odd){background:#24352A}
+@media (max-width:640px){.wheel-wrap{--R:620px;--cw:230px;--ch:270px}}
+@media (prefers-reduced-motion:reduce){
+  .more{height:auto;padding-block:clamp(72px,11vw,150px)}
+  .more-pin{position:static;height:auto;overflow:visible;padding-top:0}
+  .wheel-wrap{flex:none;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;max-width:var(--max);margin:clamp(40px,5vw,72px) auto 0;padding-inline:var(--gutter)}
+  .wheel{position:static;width:auto;height:auto;display:contents}
+  .wcard{position:static;width:auto;height:auto}
+}
 .weeks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:clamp(40px,5vw,72px)}
 .week{padding:clamp(20px,2.2vw,28px);display:flex;flex-direction:column;justify-content:flex-start;gap:10px;min-width:0;border:1px solid var(--cream-line);border-radius:6px}
 .week:nth-child(odd){background:rgba(241,230,207,.05)}
@@ -445,18 +460,22 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
   </div>
 </section>
 
-<section>
-  <div class="wrap">
-    <div class="bib-r"><span class="bib"><b>07</b> / 07</span></div>
-    <div class="head flip">
-      <h2>More we can do</h2>
-      <p class="lede">The next steps, whenever you're ready.</p>
+<section class="more" id="more">
+  <div class="more-pin">
+    <div class="wrap">
+      <div class="bib-r"><span class="bib"><b>07</b> / 07</span></div>
+      <div class="head flip">
+        <h2>More we can do</h2>
+        <p class="lede">The next steps, whenever you're ready.</p>
+      </div>
     </div>
-    <div class="weeks">
-      <div class="week"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h1a2 2 0 0 0 2-2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Creative</h3><p>Shoots, reels and campaigns.</p></div>
-      <div class="week"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4l6 2v5h-3v8a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-8H3V6l6-2a3 3 0 0 0 6 0"/></svg></span><h3>Branding</h3><p>Signage, packaging, anything with the logo.</p></div>
-      <div class="week"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M6.5 6.5h.01M9 6.5h.01"/></svg></span><h3>Website</h3><p>A landing page or full site in the new look.</p></div>
-      <div class="week"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.5"/><path d="M16.5 7.5h.01"/></svg></span><h3>Social media</h3><p>Posts, stories and a monthly plan.</p></div>
+    <div class="wheel-wrap">
+      <div class="wheel" id="wheel">
+        <div class="week wcard"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 7h1a2 2 0 0 0 2-2a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2"/><circle cx="12" cy="13" r="3"/></svg></span><h3>Creative</h3><p>Shoots, reels and campaigns.</p></div>
+        <div class="week wcard"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4l6 2v5h-3v8a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1v-8H3V6l6-2a3 3 0 0 0 6 0"/></svg></span><h3>Branding</h3><p>Signage, packaging, anything with the logo.</p></div>
+        <div class="week wcard"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/><path d="M6.5 6.5h.01M9 6.5h.01"/></svg></span><h3>Website</h3><p>A landing page or full site in the new look.</p></div>
+        <div class="week wcard"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4.5"/><circle cx="12" cy="12" r="3.5"/><path d="M16.5 7.5h.01"/></svg></span><h3>Social media</h3><p>Posts, stories and a monthly plan.</p></div>
+      </div>
     </div>
   </div>
 </section>
@@ -475,6 +494,26 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 </main>
 
 <script>
+(function(){
+  var sec=document.getElementById('more'), wheel=document.getElementById('wheel'); if(!wheel) return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var cards=[].slice.call(wheel.children), n=cards.length, STEP=24, cur=0, live=false, lastT=performance.now();
+  function radius(){ return parseFloat(getComputedStyle(wheel.parentNode).getPropertyValue('--R'))||900; }
+  var R=radius(); addEventListener('resize',function(){ R=radius(); });
+  function target(){ var r=sec.getBoundingClientRect(), travel=Math.max(1,r.height-innerHeight); return Math.min(1,Math.max(0,-r.top/travel)); }
+  function paint(p){
+    var active=p*(n-1);
+    cards.forEach(function(c,i){
+      var d=i-active, ad=Math.min(1.6,Math.abs(d));
+      c.style.transform='rotate('+(d*STEP).toFixed(3)+'deg) translate3d(0,'+(-R)+'px,0) scale('+(1-0.08*Math.min(1,ad)).toFixed(4)+')';
+      c.style.opacity=(1-0.5*Math.min(1,ad)).toFixed(3);
+      c.style.zIndex=10-Math.round(ad*4);
+    });
+  }
+  function frame(now){ if(!live) return; var dt=Math.min(.05,(now-lastT)/1000); lastT=now; var t=target(); cur+=(t-cur)*(1-Math.exp(-dt*12)); if(Math.abs(t-cur)<0.0004) cur=t; paint(cur); requestAnimationFrame(frame); }
+  new IntersectionObserver(function(en){ var v=en[0].isIntersecting; if(v&&!live){ live=true; lastT=performance.now(); requestAnimationFrame(frame); } live=v; },{rootMargin:'200px 0px'}).observe(sec);
+  cur=target(); paint(cur);
+})();
 (function(){
   // headings light up letter by letter as you scroll, and dim again on the way back up
   var still=matchMedia('(prefers-reduced-motion: reduce)').matches, items=[];
