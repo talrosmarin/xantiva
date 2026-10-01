@@ -239,13 +239,17 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 .tracks i{font-style:normal;font-size:12px;color:rgba(255,255,255,.55);font-variant-numeric:tabular-nums}
 .tracks li.on button{background:rgba(255,255,255,.12)}
 @media (prefers-reduced-motion:reduce){.eq i{animation:none}.pl-cover{transition:none}}
-/* 07 included: "NEW" stays put while the list scrolls past; the word in the middle of the screen lights up */
-.newlist{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);column-gap:clamp(12px,2.2vw,32px);margin-top:clamp(40px,5vw,72px);font-size:clamp(28px,7.6vw,116px);font-weight:700;text-transform:uppercase;line-height:1.02;letter-spacing:-.02em;color:var(--green)}
-.new-word{align-self:start;height:1.02em;will-change:transform}
-.newlist ul{list-style:none;margin:0;padding:0;min-width:0}
-.newlist li{opacity:.14;font-weight:400;transition:opacity .15s linear;white-space:nowrap}
-.newlist li.on{font-weight:700}
-@media (prefers-reduced-motion:reduce){.newlist li{opacity:1}}
+/* 07 included: rows like a spec sheet; NEW and the symbol ride down the rows with the scroll, each item lights up in its own colour */
+.newlist{position:relative;margin-top:clamp(40px,5vw,72px);font-size:clamp(28px,7vw,84px);line-height:1;letter-spacing:-.02em;text-transform:uppercase;--c1:2.75em;--c2:1.25em}
+.newlist ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink-line)}
+.newlist li{display:grid;grid-template-columns:var(--c1) var(--c2) minmax(0,1fr);align-items:center;padding-block:.16em;border-bottom:1px solid var(--ink-line)}
+.newlist li .w{color:var(--c);opacity:.26;font-weight:400;white-space:nowrap;padding-left:.18em;transition:opacity .15s linear}
+.newlist li.on .w{font-weight:700}
+.new-mover{position:absolute;left:0;top:0;width:calc(var(--c1) + var(--c2));display:grid;grid-template-columns:var(--c1) var(--c2);align-items:center;color:var(--green);font-weight:700;will-change:transform;pointer-events:none}
+.new-mover .nw{text-align:right;padding-right:.12em}
+.new-mover .ns{display:grid;place-items:center}
+.new-mover .ns svg{width:.62em;height:auto;color:var(--green)}
+@media (prefers-reduced-motion:reduce){.newlist li .w{opacity:1}}
 /* 07 included (old pairs) */
 .pairs{margin-top:clamp(48px,6vw,88px);display:grid;border-top:1px solid var(--ink-line)}
 .pair{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:clamp(14px,3vw,44px);padding-block:clamp(14px,2vw,24px);border-bottom:1px solid var(--ink-line)}
@@ -522,17 +526,17 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
       <p class="lede">Everything needed to launch the new look.</p>
     </div>
     <div class="newlist" id="newlist">
-      <div class="new-word" aria-hidden="true">New</div>
+      <div class="new-mover" aria-hidden="true"><span class="nw">New</span><span class="ns"><svg viewBox="688 522 686 741" fill="currentColor" aria-hidden="true"><path d="M 787.2 525.3 C 808.6 522.3 839.8 531.5 858.2 542.6 C 966.9 608.1 990.7 743.6 1044.2 847.4 C 1090.0 936.4 1173.0 1014.5 1265 1053.4 C 1283.8 1061.3 1314.3 1071.7 1329.3 1082.8 C 1349.3 1097.6 1362.6 1119.7 1366.4 1144.2 C 1374.7 1200.8 1337.7 1246.2 1281.9 1254.1 C 1204.6 1263.7 1143.8 1191.2 1110.5 1130.4 C 1080.5 1075.7 1064.8 1034.6 1048.8 993.9 C 1003.2 877.5 919.3 784.7 806.5 730.4 C 783.6 719.4 755.9 712.8 734.6 696.3 C 692.4 663.7 688.2 600.2 720.9 559.3 C 738.5 537.5 759.8 528.3 787.2 525.3 z"/><path d="M 1254.64 526.369 C 1298.27 522.22 1335.96 549.87 1338.37 595.154 C 1341.19 625.62 1330.98 642.829 1308.91 663.131 C 1276.68 692.771 1244.23 723.561 1212.84 754.258 C 1194.13 772.549 1174.25 790.363 1157.29 810.446 C 1149.05 820.646 1140.49 832.172 1126.98 835.488 C 1111.52 839.283 1100.04 828.749 1098.27 813.613 C 1094.17 778.613 1125.25 757.697 1143.46 732.954 C 1162.2 707.492 1170.99 673.004 1176.29 642.338 C 1181.43 611.755 1179.55 581.296 1199.96 555.703 C 1214.95 536.896 1231.44 529.208 1254.64 526.369 z"/><path d="M 949.097 956.254 C 960.303 956.241 969.654 962.46 971.967 973.851 C 980.705 1016.88 935.877 1040.79 920.62 1075.65 C 912.104 1095.11 907.064 1116.56 903.522 1137.46 C 898.81 1164.47 899.447 1194.59 885.544 1218.39 C 876.111 1234.9 860.343 1246.84 841.892 1251.45 C 820.303 1257.04 798.55 1254.82 779.288 1243.48 C 778.5 1242.98 777.72 1242.47 776.948 1241.95 C 742.304 1218.37 732.516 1171.23 756.142 1136.05 C 760.344 1129.79 766.269 1124.45 771.605 1119.13 C 800.715 1090.07 831.111 1062.27 860.51 1033.51 C 875.144 1019.02 889.703 1004.45 904.185 989.8 C 917.82 975.993 929.341 959.984 949.097 956.254 z"/></svg></span></div>
       <ul aria-label="New symbol, logo, colors, typeface, design, merch, creative, Instagram and playlist">
-        <li>symbol.</li>
-        <li>logo.</li>
-        <li>colors.</li>
-        <li>typeface.</li>
-        <li>design.</li>
-        <li>merch.</li>
-        <li>creative.</li>
-        <li>Instagram.</li>
-        <li>playlist.</li>
+        <li style="--c:#C2552A"><span></span><span></span><span class="w">symbol.</span></li>
+        <li style="--c:#2C6A82"><span></span><span></span><span class="w">logo.</span></li>
+        <li style="--c:#667A26"><span></span><span></span><span class="w">colors.</span></li>
+        <li style="--c:#8A3A58"><span></span><span></span><span class="w">typeface.</span></li>
+        <li style="--c:#946419"><span></span><span></span><span class="w">design.</span></li>
+        <li style="--c:#2C6A5C"><span></span><span></span><span class="w">merch.</span></li>
+        <li style="--c:#A3402D"><span></span><span></span><span class="w">creative.</span></li>
+        <li style="--c:#56478A"><span></span><span></span><span class="w">Instagram.</span></li>
+        <li style="--c:#1F2E24"><span></span><span></span><span class="w">playlist.</span></li>
       </ul>
     </div>
   </div>
@@ -573,17 +577,17 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 
 <script>
 (function(){
-  // NEW slides along the list with the scroll: from the first word to the last, never past them
+  // NEW + symbol slide down the rows with the scroll: from the first row to the last, never past them
   var box=document.getElementById('newlist'); if(!box) return;
-  var nw=box.querySelector('.new-word'), items=[].slice.call(box.querySelectorAll('li'));
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var raf=0;
+  var mv=box.querySelector('.new-mover'), items=[].slice.call(box.querySelectorAll('li'));
+  var still=matchMedia('(prefers-reduced-motion: reduce)').matches, raf=0;
   function upd(){ raf=0;
-    var ul=box.querySelector('ul').getBoundingClientRect(), mid=innerHeight/2;
+    var top=box.getBoundingClientRect().top, mid=innerHeight/2;
     var c=items.map(function(li){ return li.offsetTop+li.offsetHeight/2; });
-    var y=Math.min(c[c.length-1],Math.max(c[0], mid-ul.top));
-    nw.style.transform='translate3d(0,'+(y-c[0]).toFixed(1)+'px,0)';
-    items.forEach(function(li,k){ var d=Math.abs(c[k]-y), k2=Math.max(0,1-d/(li.offsetHeight*1.1)); li.style.opacity=(0.14+0.86*k2).toFixed(3); li.classList.toggle('on', d<li.offsetHeight*0.5); });
+    var y=still?c[0]:Math.min(c[c.length-1],Math.max(c[0], mid-top));
+    mv.style.transform='translate3d(0,'+(y-mv.offsetHeight/2).toFixed(1)+'px,0)';
+    if(still) return;
+    items.forEach(function(li,k){ var d=Math.abs(c[k]-y), v=Math.max(0,1-d/(li.offsetHeight*1.05)); li.querySelector('.w').style.opacity=(0.26+0.74*v).toFixed(3); li.classList.toggle('on', d<li.offsetHeight*0.5); });
   }
   addEventListener('scroll',function(){ if(!raf) raf=requestAnimationFrame(upd); },{passive:true}); addEventListener('resize',upd); upd();
 })();
