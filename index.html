@@ -79,7 +79,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 .sheet-edge{border-radius:28px 28px 0 0;box-shadow:0 -14px 40px rgba(0,0,0,.28)}
 .intro-reel .stage{transform-origin:50% 40%;will-change:transform,opacity}
 /* text reveal: letters go from shadow to light as you scroll, and back when you scroll up */
-.glow .ch,.glow-words .wd{opacity:.14;transition:opacity .12s linear}
+.glow .ch{opacity:.14;transition:opacity .12s linear}
 .glow .ch{display:inline}
 /* top bar + opening */
 .top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:22px;border-bottom:1px solid var(--cream-line)}
@@ -301,7 +301,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 <section class="hero">
   <div class="wrap">
     <h1 class="glow" aria-label="A new look for Xantiva."><span class="sr" aria-hidden="true">A new look</span><span class="sr thin" aria-hidden="true">for Xantiva.</span></h1>
-    <p class="lede glow-words">A clean, confident identity made for the club, the jungle and the people who train here.</p>
+    <p class="lede">A clean, confident identity made for the club, the jungle and the people who train here.</p>
   </div>
 </section>
 
@@ -443,7 +443,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 <section class="close deep">
   <div class="wrap">
     <div class="sym"><svg viewBox="688 522 686 741" fill="currentColor" aria-hidden="true"><path d="M 787.2 525.3 C 808.6 522.3 839.8 531.5 858.2 542.6 C 966.9 608.1 990.7 743.6 1044.2 847.4 C 1090.0 936.4 1173.0 1014.5 1265 1053.4 C 1283.8 1061.3 1314.3 1071.7 1329.3 1082.8 C 1349.3 1097.6 1362.6 1119.7 1366.4 1144.2 C 1374.7 1200.8 1337.7 1246.2 1281.9 1254.1 C 1204.6 1263.7 1143.8 1191.2 1110.5 1130.4 C 1080.5 1075.7 1064.8 1034.6 1048.8 993.9 C 1003.2 877.5 919.3 784.7 806.5 730.4 C 783.6 719.4 755.9 712.8 734.6 696.3 C 692.4 663.7 688.2 600.2 720.9 559.3 C 738.5 537.5 759.8 528.3 787.2 525.3 z"/><path d="M 1254.64 526.369 C 1298.27 522.22 1335.96 549.87 1338.37 595.154 C 1341.19 625.62 1330.98 642.829 1308.91 663.131 C 1276.68 692.771 1244.23 723.561 1212.84 754.258 C 1194.13 772.549 1174.25 790.363 1157.29 810.446 C 1149.05 820.646 1140.49 832.172 1126.98 835.488 C 1111.52 839.283 1100.04 828.749 1098.27 813.613 C 1094.17 778.613 1125.25 757.697 1143.46 732.954 C 1162.2 707.492 1170.99 673.004 1176.29 642.338 C 1181.43 611.755 1179.55 581.296 1199.96 555.703 C 1214.95 536.896 1231.44 529.208 1254.64 526.369 z"/><path d="M 949.097 956.254 C 960.303 956.241 969.654 962.46 971.967 973.851 C 980.705 1016.88 935.877 1040.79 920.62 1075.65 C 912.104 1095.11 907.064 1116.56 903.522 1137.46 C 898.81 1164.47 899.447 1194.59 885.544 1218.39 C 876.111 1234.9 860.343 1246.84 841.892 1251.45 C 820.303 1257.04 798.55 1254.82 779.288 1243.48 C 778.5 1242.98 777.72 1242.47 776.948 1241.95 C 742.304 1218.37 732.516 1171.23 756.142 1136.05 C 760.344 1129.79 766.269 1124.45 771.605 1119.13 C 800.715 1090.07 831.111 1062.27 860.51 1033.51 C 875.144 1019.02 889.703 1004.45 904.185 989.8 C 917.82 975.993 929.341 959.984 949.097 956.254 z"/></svg></div>
-    <h2>Let's build it together.</h2>
+    <h2 class="glow" data-span="0.6" aria-label="Let's build it together."><span class="sr" aria-hidden="true">Let's build it together.</span></h2>
     <p class="lede">One message is all it takes to start.</p>
     <div class="fine">
       <span>Tal Rosmarin · Creative and branding</span>
@@ -455,21 +455,29 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 
 <script>
 (function(){
-  var h=document.querySelector('.glow'), sub=document.querySelector('.glow-words'); if(!h) return;
-  var units=[];
-  h.querySelectorAll('.sr').forEach(function(line){
-    var t=line.textContent; line.textContent='';
-    for(var i=0;i<t.length;i++){ var c=document.createElement('span'); c.className='ch'; c.textContent=t[i]; line.appendChild(c); if(t[i]!==' ') units.push(c); }
+  // headings light up letter by letter as you scroll, and dim again on the way back up
+  var still=matchMedia('(prefers-reduced-motion: reduce)').matches, items=[];
+  document.querySelectorAll('.glow').forEach(function(h){
+    var units=[];
+    h.querySelectorAll('.sr').forEach(function(line){
+      var t=line.textContent; line.textContent='';
+      for(var i=0;i<t.length;i++){ var c=document.createElement('span'); c.className='ch'; c.textContent=t[i]; line.appendChild(c); if(t[i]!==' ') units.push(c); }
+    });
+    if(still){ units.forEach(function(u){ u.style.opacity=1; }); return; }
+    items.push({h:h, sec:h.closest('section'), units:units, span:parseFloat(h.dataset.span||'0')});
   });
-  if(sub){ var words=sub.textContent.split(' '); sub.textContent='';
-    words.forEach(function(w,i){ var sp=document.createElement('span'); sp.className='wd'; sp.textContent=w; sub.appendChild(sp); if(i<words.length-1) sub.appendChild(document.createTextNode(' ')); units.push(sp); }); }
-  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ units.forEach(function(u){ u.style.opacity=1; }); return; }
-  var sec=h.closest('section'), N=units.length, K=5, raf=0;
-  function upd(){ raf=0;
-    var r=sec.getBoundingClientRect(), vh=innerHeight;
-    var p=Math.min(1,Math.max(0,(vh*0.95-r.top)/(vh*1.15)));
-    var head=p*(N+K);
-    for(var i=0;i<N;i++){ var v=Math.min(1,Math.max(0,(head-i)/K)); units[i].style.opacity=(0.14+0.86*v).toFixed(3); }
+  if(!items.length) return;
+  var K=5, raf=0;
+  function upd(){ raf=0; var vh=innerHeight;
+    items.forEach(function(it){
+      var p;
+      if(it.span){ var r=it.h.getBoundingClientRect(), maxS=document.documentElement.scrollHeight-vh;
+        var endTop=Math.max(vh*(0.95-it.span), r.top+scrollY-maxS+8); p=(vh*0.95-r.top)/Math.max(40,vh*0.95-endTop); }
+      else { var rs=it.sec.getBoundingClientRect(); p=(vh*0.95-rs.top)/(vh*1.15); }
+      p=Math.min(1,Math.max(0,p));
+      var N=it.units.length, head=p*(N+K);
+      for(var i=0;i<N;i++){ var v=Math.min(1,Math.max(0,(head-i)/K)); it.units[i].style.opacity=(0.14+0.86*v).toFixed(3); }
+    });
   }
   addEventListener('scroll',function(){ if(!raf) raf=requestAnimationFrame(upd); },{passive:true}); addEventListener('resize',upd); upd();
 })();
