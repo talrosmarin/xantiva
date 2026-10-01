@@ -81,22 +81,24 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 
 /* curtain: the opening stays pinned while the rest of the page slides up over it */
 :where(main > section, main > .sheet-edge){position:relative;z-index:1;background:var(--green)}
-.sheet-edge{border-radius:28px 28px 0 0;box-shadow:0 -14px 40px rgba(0,0,0,.28)}
+.sheet-edge{border-radius:28px 28px 0 0;box-shadow:0 -14px 40px rgba(0,0,0,.28);background:var(--cream)}
 .intro-reel .stage{transform-origin:50% 40%;will-change:transform,opacity}
 /* text reveal: letters go from shadow to light as you scroll, and back when you scroll up */
 .glow .ch{opacity:.14;transition:opacity .12s linear}
 .glow .ch{display:inline}
 /* top bar + opening */
-.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:22px;border-bottom:1px solid var(--cream-line)}
-.top .wm{width:120px;color:var(--cream)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding-block:22px;border-bottom:1px solid var(--ink-line)}
+.top .wm{width:120px;color:var(--green)}
 .brand-row{display:flex;align-items:center;gap:7px}
-.top .sym-sm{width:21px;color:var(--cream);display:block}
+.top .sym-sm{width:21px;color:var(--green);display:block}
 .sym-sm svg{width:100%}
 .top span{font-size:13px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--cream-dim)}
-.hero{padding-block:clamp(56px,8vw,110px) clamp(56px,7vw,96px)}
+.hero{padding-block:clamp(56px,8vw,110px) clamp(56px,7vw,96px);background:var(--cream);color:var(--green)}
+.hero h1{color:var(--green)}
+.hero .lede{color:var(--ink-dim)}
 .hero h1{font-size:clamp(52px,10vw,156px);line-height:.86;letter-spacing:-.025em}
 .hero h1 span{display:block}
-.hero h1 .thin{font-weight:400;color:var(--cream-dim)}
+.hero h1 .thin{font-weight:400;color:rgba(31,46,36,.6)}
 .hero .lede{margin-top:32px;max-width:46ch}
 
 /* small moving band */
