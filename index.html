@@ -248,7 +248,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 .newlist{position:relative;margin-top:clamp(40px,5vw,72px);font-size:clamp(28px,7vw,84px);line-height:1;letter-spacing:-.02em;text-transform:uppercase;--c1:2.75em;--c2:1.25em}
 .newlist ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--ink-line)}
 .newlist li{display:grid;grid-template-columns:var(--c1) var(--c2) minmax(0,1fr);align-items:center;padding-block:.16em;border-bottom:1px solid var(--ink-line)}
-.newlist li .w{color:var(--c);opacity:.26;font-weight:400;white-space:nowrap;padding-left:.18em;transition:opacity .15s linear}
+.newlist li .w{color:var(--c);opacity:.26;font-weight:400;white-space:nowrap;padding-left:.18em;transition:opacity .25s ease}
 .newlist li.on .w{font-weight:700}
 .newlist li .ic{margin-left:.6em;width:.7em;height:.7em;display:grid;place-items:center;color:var(--green);transform:scale(0) rotate(-20deg);opacity:0;transition:transform .45s cubic-bezier(.34,1.7,.5,1),opacity .2s ease}
 .newlist li .ic svg{width:100%;height:100%;display:block}
@@ -591,19 +591,31 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 
 <script>
 (function(){
-  // NEW + symbol slide down the rows with the scroll: from the first row to the last, never past them
+  // NEW + symbol glide down the rows with the scroll (eased, a little slower than the page);
+  // a word lights up only once NEW sits fully inside its row
   var box=document.getElementById('newlist'); if(!box) return;
   var mv=box.querySelector('.new-mover'), items=[].slice.call(box.querySelectorAll('li'));
-  var still=matchMedia('(prefers-reduced-motion: reduce)').matches, raf=0;
-  function upd(){ raf=0;
-    var top=box.getBoundingClientRect().top, mid=innerHeight/2;
-    var c=items.map(function(li){ return li.offsetTop+li.offsetHeight/2; });
-    var y=still?c[0]:Math.min(c[c.length-1],Math.max(c[0], mid-top));
-    mv.style.transform='translate3d(0,'+(y-mv.offsetHeight/2).toFixed(1)+'px,0)';
-    if(still) return;
-    items.forEach(function(li,k){ var d=Math.abs(c[k]-y), v=Math.max(0,1-d/(li.offsetHeight*1.05)); li.querySelector('.w').style.opacity=(0.26+0.74*v).toFixed(3); li.classList.toggle('on', d<li.offsetHeight*0.5); });
+  var still=matchMedia('(prefers-reduced-motion: reduce)').matches, SPEED=0.78;
+  var cur=null, live=false, lastT=performance.now(), lastScroll=0;
+  addEventListener('scroll',function(){ lastScroll=performance.now(); },{passive:true});
+  function centres(){ return items.map(function(li){ return li.offsetTop+li.offsetHeight/2; }); }
+  function target(c){ var top=box.getBoundingClientRect().top, mid=innerHeight/2; return Math.min(c[c.length-1],Math.max(c[0], c[0]+(mid-top-c[0])*SPEED)); }
+  function paint(y,c){
+    var mh=mv.offsetHeight;
+    mv.style.transform='translate3d(0,'+(y-mh/2).toFixed(2)+'px,0)';
+    items.forEach(function(li,k){
+      var inside=Math.abs(c[k]-y) <= Math.max(4,li.offsetHeight*0.2);
+      li.classList.toggle('on',inside);
+      li.querySelector('.w').style.opacity=inside?'1':'0.26';
+    });
   }
-  addEventListener('scroll',function(){ if(!raf) raf=requestAnimationFrame(upd); },{passive:true}); addEventListener('resize',upd); upd();
+  function frame(now){ if(!live) return; var dt=Math.min(.05,(now-lastT)/1000); lastT=now;
+    var c=centres(), t=target(c);
+    if(now-lastScroll>140){ var best=c[0]; c.forEach(function(v){ if(Math.abs(v-t)<Math.abs(best-t)) best=v; }); t=best; }
+    if(cur===null) cur=t; cur+=(t-cur)*(1-Math.exp(-dt*9)); if(Math.abs(t-cur)<0.3) cur=t; paint(cur,c); requestAnimationFrame(frame); }
+  if(still){ var c0=centres(); paint(c0[0],c0); items.forEach(function(li){ li.querySelector('.w').style.opacity='1'; }); return; }
+  new IntersectionObserver(function(en){ var v=en[0].isIntersecting; if(v&&!live){ live=true; lastT=performance.now(); requestAnimationFrame(frame); } live=v; },{rootMargin:'200px 0px'}).observe(box);
+  var c1=centres(); cur=target(c1); paint(cur,c1);
 })();
 (function(){
   var pl=document.getElementById('player'); if(!pl) return;
