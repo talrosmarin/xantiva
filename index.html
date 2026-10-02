@@ -141,9 +141,23 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 .band img{width:100%;aspect-ratio:4/5;height:auto;object-fit:cover;border-radius:10px}
 .band .tag{position:static;align-self:flex-start;background:none;color:var(--cream-dim);padding:14px 4px 14px;letter-spacing:.16em}
 /* in the club: the club's own stories, redone in the brand. Tap to open full size */
-.band.stories{grid-template-columns:repeat(2,minmax(0,360px));justify-content:center;margin-top:clamp(12px,1.6vw,22px)}
-.band.stories figure{cursor:zoom-in}
-.band.stories img{aspect-ratio:9/16;object-fit:contain;background:var(--green-deep)}
+/* in the club: a coverflow. Drag, swipe, arrow keys or the buttons; tap the front card to open it */
+.cf{--cf-card:clamp(220px,27vw,360px)}
+.cf-frame{overflow:hidden;padding:40px 0;outline:none;cursor:grab;touch-action:pan-y;perspective:calc(var(--cf-card) * 3)}
+.cf-frame:active{cursor:grabbing}
+.cf-frame:focus-visible{box-shadow:inset 0 0 0 2px var(--cream-line)}
+.cf-stage{position:relative;height:calc(var(--cf-card) * 1.25);transform-style:preserve-3d;user-select:none;-webkit-user-select:none}
+.cf-card{position:absolute;left:50%;top:0;width:var(--cf-card);aspect-ratio:4/5;margin:0;border-radius:16px;overflow:hidden;background:var(--green-deep);border:1px solid var(--cream-line);box-shadow:0 30px 60px -25px rgba(0,0,0,.6);will-change:transform,opacity}
+.cf-card img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.cf-card.story img{object-fit:contain}
+.cf-ui{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:4px}
+.cf-mid{display:flex;flex-direction:column;align-items:center;gap:12px}
+.cf-cap{margin:0;font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--cream)}
+.cf-dots{display:flex;gap:8px}
+.cf-dots button{width:8px;height:8px;padding:0;border:0;border-radius:50%;background:var(--cream);opacity:.3;cursor:pointer;transition:opacity .3s}
+.cf-dots button[aria-current="true"]{opacity:1}
+.cf-ui .car-btn{color:var(--cream);border-color:var(--cream-line)}
+.cf-ui .car-btn:hover{background:rgba(241,230,207,.06)}
 .tag{position:absolute;left:14px;top:14px;background:var(--cream);color:var(--green);font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:5px 8px 4px;border-radius:3px}
 
 /* 03 merch */
@@ -360,8 +374,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
   .head.flip h2{white-space:normal}
   .kit{aspect-ratio:4/3;max-width:none}
   .band img{height:auto}
-  .band.stories{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .band.stories figure:first-child{grid-column:auto}
+  .cf{--cf-card:56vw}
 }
 @media (prefers-reduced-motion:reduce){
   .scroll-cue,.marquee div{animation:none}
@@ -448,15 +461,22 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
       <p class="lede">On the building, the equipment and the team.</p>
     </div>
   </div>
-  <div class="wrap"><div class="band">
-    <figure><img src="img/club-building.jpg" alt="The building with the new Xantiva sign" loading="lazy"><span class="tag">Signage</span></figure>
-    <figure><img src="img/club-rack.jpg" alt="Dumbbells with the Xantiva logo" loading="lazy"><span class="tag">Equipment</span></figure>
-    <figure><img src="img/tee-front.jpg" alt="Cream team tee with the Xantiva logo on the chest" loading="lazy" style="object-position:50% 35%"><span class="tag">Team wear</span></figure>
+  <div class="cf" id="club-cf" role="region" aria-roledescription="carousel" aria-label="In the club">
+    <div class="cf-frame" tabindex="0">
+      <div class="cf-stage">
+        <figure class="cf-card" data-title="Signage"><img src="img/club-building.jpg" alt="The building with the new Xantiva sign" draggable="false"></figure>
+        <figure class="cf-card" data-title="Equipment"><img src="img/club-rack.jpg" alt="Dumbbells with the Xantiva logo" draggable="false"></figure>
+        <figure class="cf-card" data-title="Team wear"><img src="img/tee-front.jpg" alt="Cream team tee with the Xantiva logo on the chest" draggable="false" style="object-position:50% 35%"></figure>
+        <figure class="cf-card story" data-title="Price list"><img src="img/story-prices.jpg" alt="Price list 2026 story in the Xantiva brand" draggable="false"></figure>
+        <figure class="cf-card story" data-title="House rules"><img src="img/story-rules.jpg" alt="AC building rules story in the Xantiva brand" draggable="false"></figure>
+      </div>
+    </div>
+    <div class="cf-ui wrap">
+      <button type="button" class="car-btn cf-prev" aria-label="Previous"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <div class="cf-mid"><p class="cf-cap" aria-live="polite">Signage</p><div class="cf-dots"></div></div>
+      <button type="button" class="car-btn cf-next" aria-label="Next"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
   </div>
-  <div class="band stories">
-    <figure><img src="img/story-prices.jpg" alt="Price list 2026 story in the Xantiva brand" loading="lazy"><span class="tag">Price list</span></figure>
-    <figure><img src="img/story-rules.jpg" alt="AC building rules story in the Xantiva brand" loading="lazy"><span class="tag">House rules</span></figure>
-  </div></div>
 </section>
 
 <section class="off">
@@ -767,7 +787,6 @@ toTop(); addEventListener('pageshow',toTop); addEventListener('load',function(){
   }
   box.addEventListener('pointerup',end); box.addEventListener('pointercancel',function(){ dragging=false; box.classList.remove('drag'); });
   lb.addEventListener('click',function(){ lb.hidden=true; });
-  [].forEach.call(document.querySelectorAll('.band.stories figure'),function(f){ f.addEventListener('click',function(){ var im=f.querySelector('img'); lb.querySelector('img').src=im.src; lb.querySelector('img').alt=im.alt; lb.hidden=false; }); });
   addEventListener('keydown',function(e){ if(e.key==='Escape') lb.hidden=true; });
   addEventListener('resize',build); build(); requestAnimationFrame(tick);
 })();
@@ -787,6 +806,70 @@ toTop(); addEventListener('pageshow',toTop); addEventListener('load',function(){
   function frame(now){ if(!live) return; var dt=Math.min(0.05,(now-lastT)/1000); lastT=now; var t=target(); cur+=(t-cur)*(1-Math.exp(-dt*14)); if(Math.abs(t-cur)<0.0004) cur=t; paint(cur); requestAnimationFrame(frame); }
   new IntersectionObserver(function(en){ var v=en[0].isIntersecting; if(v&&!live){ live=true; lastT=performance.now(); requestAnimationFrame(frame); } live=v; },{rootMargin:'200px 0px'}).observe(sec);
   cur=target(); paint(cur);
+})();
+(function(){
+  // coverflow: the front card faces you, neighbours tilt back and recede. One number (pos) drives it all.
+  var root=document.getElementById('club-cf'); if(!root) return;
+  var frame=root.querySelector('.cf-frame'), cards=[].slice.call(root.querySelectorAll('.cf-card')), n=cards.length;
+  var cap=root.querySelector('.cf-cap'), dotsBox=root.querySelector('.cf-dots');
+  var ROT=44, DEPTH=0.6, FALL=0.56, FADE=0.1, GAP=0.05;
+  var pos=0, target=0, width=0, raf=null, drag=null, sel=-1;
+  var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var dots=cards.map(function(c,i){ var b=document.createElement('button'); b.type='button'; b.setAttribute('aria-label','Go to '+c.dataset.title); b.addEventListener('click',function(){ goTo(i); }); dotsBox.appendChild(b); return b; });
+  function idx(p){ return ((Math.round(p)%n)+n)%n; }
+  function select(i){ if(i===sel) return; sel=i; cap.textContent=cards[i].dataset.title; dots.forEach(function(d,k){ d.setAttribute('aria-current',k===i?'true':'false'); }); }
+  function paint(){
+    if(!width) return; var pitch=width*(1+GAP);
+    cards.forEach(function(c,i){
+      var off=((i-pos)%n+n)%n; if(off>n/2) off-=n;
+      var d=Math.abs(off), ramp=Math.pow(d,FALL), tilt=Math.min(ROT*ramp,82)*Math.sign(off);
+      c.style.transform='translateX(calc(-50% + '+(off*pitch).toFixed(1)+'px)) translateZ('+(-DEPTH*width*ramp).toFixed(1)+'px) rotateY('+(-tilt).toFixed(2)+'deg)';
+      var edge=Math.min(1,Math.max(0,n/2-d));
+      c.style.opacity=(Math.max(0,1-FADE*d)*edge).toFixed(3);
+      c.style.zIndex=100-Math.round(d);
+    });
+  }
+  function settle(t){
+    if(raf) cancelAnimationFrame(raf); target=t; select(idx(t));
+    if(still){ pos=t; paint(); return; }
+    var last=performance.now();
+    (function step(now){
+      var dt=Math.min(.05,((now||last)-last)/1000); last=now||last;
+      var rem=target-pos;
+      if(Math.abs(rem)<0.0004){ pos=target; paint(); raf=null; return; }
+      pos+=rem*(1-Math.exp(-dt*11)); paint(); raf=requestAnimationFrame(step);
+    })(last);
+  }
+  function goTo(i){ settle(i+Math.round((target-i)/n)*n); }
+  function nudge(by){ settle(Math.round(target)+by); }
+  frame.addEventListener('pointerdown',function(e){
+    if(raf){ cancelAnimationFrame(raf); raf=null; }
+    frame.setPointerCapture(e.pointerId); target=pos;
+    drag={id:e.pointerId,x:e.clientX,pos:pos,v:0,t:performance.now(),moved:0};
+  });
+  frame.addEventListener('pointermove',function(e){
+    if(!drag||drag.id!==e.pointerId) return; var pitch=width*(1+GAP); if(!pitch) return;
+    var now=performance.now(), prev=pos; pos=drag.pos-(e.clientX-drag.x)/pitch;
+    drag.moved=Math.max(drag.moved,Math.abs(e.clientX-drag.x));
+    drag.v=(pos-prev)/Math.max(now-drag.t,1)*1000; drag.t=now; select(idx(pos)); paint();
+  });
+  function end(e){
+    if(!drag||drag.id!==e.pointerId) return; var d=drag; drag=null;
+    if(d.moved<6){
+      // a tap: open the front card, or bring a side card to the front
+      var hit=document.elementFromPoint(e.clientX,e.clientY); hit=hit&&hit.closest('.cf-card');
+      var i=cards.indexOf(hit);
+      if(i===sel){ var lb=document.getElementById('lightbox'); if(lb){ var im=hit.querySelector('img'); lb.querySelector('img').src=im.src; lb.querySelector('img').alt=im.alt; lb.hidden=false; } settle(Math.round(pos)); return; }
+      if(i>=0){ goTo(i); return; }
+    }
+    settle(Math.round(pos+Math.max(-2,Math.min(2,d.v*0.18))));
+  }
+  frame.addEventListener('pointerup',end); frame.addEventListener('pointercancel',end);
+  frame.addEventListener('keydown',function(e){ if(e.key==='ArrowLeft'){ e.preventDefault(); nudge(-1); } else if(e.key==='ArrowRight'){ e.preventDefault(); nudge(1); } });
+  root.querySelector('.cf-prev').addEventListener('click',function(){ nudge(-1); });
+  root.querySelector('.cf-next').addEventListener('click',function(){ nudge(1); });
+  function measure(){ width=cards[0].offsetWidth; paint(); }
+  new ResizeObserver(measure).observe(frame); measure(); select(0);
 })();
 (function(){
   var t=document.getElementById('merch-track'); if(!t) return;
