@@ -296,11 +296,13 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 /* 07: a wheel of cards that turns as you scroll; the slide stays pinned while it turns */
 .more{height:360vh;padding:0}
 .more-pin{position:sticky;top:0;height:100svh;overflow:hidden;display:flex;flex-direction:column;padding-top:clamp(56px,8vw,110px)}
-.wheel-wrap{position:relative;flex:1;--R:1150px;--cw:340px;--ch:380px}
-.wheel{position:absolute;left:50%;top:calc(52% + var(--R));width:0;height:0}
-.wcard{position:absolute;width:var(--cw);height:var(--ch);left:calc(var(--cw) / -2);top:calc(var(--ch) / -2);background:#24352A;will-change:transform,opacity;backface-visibility:hidden}
+.wheel-wrap{position:relative;flex:1;--R:560px;--cw:300px;--ch:340px;-webkit-mask-image:linear-gradient(to top,transparent 0%,#000 38%,#000 100%);mask-image:linear-gradient(to top,transparent 0%,#000 38%,#000 100%)}
+.wheel{position:absolute;left:50%;top:calc(var(--ch) * .78 + 56px + var(--R));width:0;height:0}
+.wcard{position:absolute;width:var(--cw);height:var(--ch);left:calc(var(--cw) / -2);top:calc(var(--ch) / -2);background:#24352A;will-change:transform;backface-visibility:hidden;cursor:pointer;outline:none;transition:filter .5s ease,opacity .5s ease,border-color .3s ease}
+.wheel.has-hover .wcard:not(.hov){filter:blur(2px) grayscale(1);opacity:.4}
+.wcard.hov{border-color:rgba(241,230,207,.5)}
 .wcard:nth-child(odd){background:#24352A}
-@media (max-width:640px){.wheel-wrap{--R:620px;--cw:230px;--ch:270px}}
+@media (max-width:640px){.wheel-wrap{--R:270px;--cw:210px;--ch:250px}}
 @media (prefers-reduced-motion:reduce){
   .more{height:auto;padding-block:clamp(72px,11vw,150px)}
   .more-pin{position:static;height:auto;overflow:visible;padding-top:0}
@@ -656,24 +658,41 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
   lis[0].classList.add('on'); show(); requestAnimationFrame(tick);
 })();
 (function(){
+  // radial scroll gallery: the cards sit evenly around a big circle that is mostly below the fold.
+  // The slide stays pinned and the circle turns with the scroll, bringing each card to the top in turn.
   var sec=document.getElementById('more'), wheel=document.getElementById('wheel'); if(!wheel) return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var cards=[].slice.call(wheel.children), n=cards.length, STEP=24, cur=0, live=false, lastT=performance.now();
-  function radius(){ return parseFloat(getComputedStyle(wheel.parentNode).getPropertyValue('--R'))||900; }
+  var cards=[].slice.call(wheel.children), n=cards.length, STEP=360/n, cur=0, live=false, lastT=performance.now();
+  var hov=-1, lift=cards.map(function(){ return 0; }), t0=null;
+  function radius(){ return parseFloat(getComputedStyle(wheel.parentNode).getPropertyValue('--R'))||560; }
   var R=radius(); addEventListener('resize',function(){ R=radius(); });
   function target(){ var r=sec.getBoundingClientRect(), travel=Math.max(1,r.height-innerHeight); return Math.min(1,Math.max(0,-r.top/travel)); }
-  function paint(p){
-    var active=p*(n-1);
+  function backOut(x){ var c=1.2, c3=c+1; return 1+c3*Math.pow(x-1,3)+c*Math.pow(x-1,2); }
+  function setHov(i){ hov=i; wheel.classList.toggle('has-hover',i>=0); cards.forEach(function(c,k){ c.classList.toggle('hov',k===i); }); }
+  cards.forEach(function(c,i){
+    c.tabIndex=0;
+    c.addEventListener('mouseenter',function(){ setHov(i); }); c.addEventListener('mouseleave',function(){ setHov(-1); });
+    c.addEventListener('focus',function(){ setHov(i); }); c.addEventListener('blur',function(){ setHov(-1); });
+  });
+  function paint(p,now){
+    var turn=p*(n-1)*STEP;
     cards.forEach(function(c,i){
-      var d=i-active, ad=Math.min(1.6,Math.abs(d));
-      c.style.transform='rotate('+(d*STEP).toFixed(3)+'deg) translate3d(0,'+(-R)+'px,0) scale('+(1-0.08*Math.min(1,ad)).toFixed(4)+')';
-      c.style.opacity=(1-0.5*Math.min(1,ad)).toFixed(3);
-      c.style.zIndex=10-Math.round(ad*4);
+      var e=1; if(t0!==null){ var k=Math.min(1,Math.max(0,((now-t0)/1000-i*0.05)/1.2)); e=k>=1?1:Math.max(0,backOut(k)); } else e=0;
+      var h=lift[i];
+      c.style.transform='rotate('+(i*STEP-turn).toFixed(3)+'deg) translate3d(0,'+(-R-32*h).toFixed(1)+'px,0) scale('+(e*(1+0.25*h)).toFixed(4)+')';
+      c.style.zIndex=i===hov?100:10;
     });
   }
-  function frame(now){ if(!live) return; var dt=Math.min(.05,(now-lastT)/1000); lastT=now; var t=target(); cur+=(t-cur)*(1-Math.exp(-dt*12)); if(Math.abs(t-cur)<0.0004) cur=t; paint(cur); requestAnimationFrame(frame); }
+  function frame(now){
+    if(!live) return; var dt=Math.min(.05,(now-lastT)/1000); lastT=now;
+    var t=target(); cur+=(t-cur)*(1-Math.exp(-dt*6)); if(Math.abs(t-cur)<0.0004) cur=t;
+    for(var i=0;i<n;i++){ lift[i]+=((i===hov?1:0)-lift[i])*(1-Math.exp(-dt*9)); }
+    paint(cur,now); requestAnimationFrame(frame);
+  }
   new IntersectionObserver(function(en){ var v=en[0].isIntersecting; if(v&&!live){ live=true; lastT=performance.now(); requestAnimationFrame(frame); } live=v; },{rootMargin:'200px 0px'}).observe(sec);
-  cur=target(); paint(cur);
+  // cards pop in one after another when the slide first comes into view
+  new IntersectionObserver(function(en){ if(en[0].isIntersecting&&t0===null) t0=performance.now(); },{threshold:0.15}).observe(sec);
+  cur=target(); paint(cur,performance.now());
 })();
 (function(){
   // headings light up letter by letter as you scroll, and dim again on the way back up
