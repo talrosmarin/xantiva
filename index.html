@@ -108,7 +108,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 .marquee{border-block:1px solid var(--cream-line);overflow:hidden;white-space:nowrap;padding:0}
 .marquee div{display:inline-flex;align-items:center;padding-block:14px;font-size:clamp(14px,1.3vw,17px);font-weight:400;letter-spacing:.2em;animation:run 40s linear infinite;will-change:transform;backface-visibility:hidden}
 .marquee div>*{margin-right:28px}
-.marquee svg{width:14px;height:auto;color:#fff;flex:none;filter:drop-shadow(0 0 5px rgba(255,255,255,.45))}
+.marquee svg{width:14px;height:auto;color:#FBF6EC;flex:none}
 @keyframes run{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 
 /* 01 identity sheet */
@@ -894,6 +894,9 @@ toTop(); addEventListener('pageshow',toTop); addEventListener('load',function(){
 })();
 </script>
 <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js">
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/SVGLoader.js">
+<link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/environments/RoomEnvironment.js">
+<link rel="preload" href="img/symbol.svg" as="fetch" crossorigin>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 <script type="module">
 // The spinning liquid X from the launch reel, drawn live on a transparent canvas so it sits on the page's own green.
@@ -931,8 +934,11 @@ try {
   };
   draw(0.6);
   stage.classList.add('live');
-  const t0 = performance.now();
-  if (!still) renderer.setAnimationLoop(() => { if (!window.__xPause) draw((0.6 + (performance.now() - t0) / 1000) % 10); });
+  // take over from the poster on the same pose, then ease into the spin (constant acceleration over RAMP s),
+  // so the symbol is already there on refresh and starts turning without a jolt
+  const t0 = performance.now(), RAMP = 0.9;
+  const clock = (e) => e < RAMP ? e * e / (2 * RAMP) : e - RAMP / 2;
+  if (!still) renderer.setAnimationLoop(() => { if (!window.__xPause) draw((0.6 + clock((performance.now() - t0) / 1000)) % 10); });
 } catch (e) { stage.classList.add('nogl'); }
 </script>
 </body>
