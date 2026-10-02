@@ -140,6 +140,10 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 .band figure{position:relative;padding:10px 10px 0;border:1px solid var(--cream-line);border-radius:18px;background:rgba(241,230,207,.03);display:flex;flex-direction:column}
 .band img{width:100%;aspect-ratio:4/5;height:auto;object-fit:cover;border-radius:10px}
 .band .tag{position:static;align-self:flex-start;background:none;color:var(--cream-dim);padding:14px 4px 14px;letter-spacing:.16em}
+/* in the club: the club's own stories, redone in the brand. Tap to open full size */
+.band.stories{grid-template-columns:repeat(2,minmax(0,360px));justify-content:center;margin-top:clamp(12px,1.6vw,22px)}
+.band.stories figure{cursor:zoom-in}
+.band.stories img{aspect-ratio:9/16;object-fit:contain;background:var(--green-deep)}
 .tag{position:absolute;left:14px;top:14px;background:var(--cream);color:var(--green);font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:5px 8px 4px;border-radius:3px}
 
 /* 03 merch */
@@ -354,6 +358,8 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
   .head.flip h2{white-space:normal}
   .kit{aspect-ratio:4/3;max-width:none}
   .band img{height:auto}
+  .band.stories{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .band.stories figure:first-child{grid-column:auto}
 }
 @media (prefers-reduced-motion:reduce){
   .scroll-cue,.marquee div{animation:none}
@@ -444,6 +450,10 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
     <figure><img src="img/club-building.jpg" alt="The building with the new Xantiva sign" loading="lazy"><span class="tag">Signage</span></figure>
     <figure><img src="img/club-rack.jpg" alt="Dumbbells with the Xantiva logo" loading="lazy"><span class="tag">Equipment</span></figure>
     <figure><img src="img/tee-front.jpg" alt="Cream team tee with the Xantiva logo on the chest" loading="lazy" style="object-position:50% 35%"><span class="tag">Team wear</span></figure>
+  </div>
+  <div class="band stories">
+    <figure><img src="img/story-prices.jpg" alt="Price list 2026 story in the Xantiva brand" loading="lazy"><span class="tag">Price list</span></figure>
+    <figure><img src="img/story-rules.jpg" alt="AC building rules story in the Xantiva brand" loading="lazy"><span class="tag">House rules</span></figure>
   </div></div>
 </section>
 
@@ -738,6 +748,7 @@ toTop(); addEventListener('pageshow',toTop); addEventListener('load',function(){
   }
   box.addEventListener('pointerup',end); box.addEventListener('pointercancel',function(){ dragging=false; box.classList.remove('drag'); });
   lb.addEventListener('click',function(){ lb.hidden=true; });
+  [].forEach.call(document.querySelectorAll('.band.stories figure'),function(f){ f.addEventListener('click',function(){ var im=f.querySelector('img'); lb.querySelector('img').src=im.src; lb.querySelector('img').alt=im.alt; lb.hidden=false; }); });
   addEventListener('keydown',function(e){ if(e.key==='Escape') lb.hidden=true; });
   addEventListener('resize',build); build(); requestAnimationFrame(tick);
 })();
