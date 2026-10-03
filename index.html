@@ -69,16 +69,17 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 .stage.nogl .fallback{display:block}
 /* the poster is the exact first frame of the 3D render, so on refresh the symbol is already there; the live canvas takes over on the same pose */
 .stage .poster{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
-.stage canvas{opacity:0}
-.stage.live canvas{opacity:1}
-.stage .spin{position:absolute;left:35.185%;top:32.8125%;width:29.63%;height:19.79%;display:none;pointer-events:none}
+/* only the live 3D canvas waits hidden; the sprite canvas must stay visible */
+.stage #x3d{opacity:0}
+.stage.live #x3d{opacity:1}
+.stage .spin{position:absolute;left:35.185%;top:32.8125%;width:29.63%;height:20.833%;display:none;pointer-events:none}
 .stage.spinning .spin{display:block}
 .stage.spinning .poster,.stage.live .poster,.stage.live .spin,.stage.nogl .poster,.stage.nogl .spin{display:none}
 .stage-type{position:absolute;left:0;right:0;top:56.8%;text-align:center;color:var(--cream)}
 .st-wm{width:55.6cqw;margin:0 auto}
 .st-wm svg{width:100%;color:var(--cream)}
 .stage-type p{margin:4.1cqw auto 0;max-width:none;font-weight:500;font-size:2.78cqw;letter-spacing:.93cqw;line-height:1.2}
-.stage-type p.e{margin-top:2cqw;font-size:2.04cqw;letter-spacing:.74cqw;opacity:.6}
+.stage-type p.e{margin-top:2cqw;font-size:2.04cqw;letter-spacing:.74cqw}
 .intro-top{position:absolute;left:0;right:0;top:calc(22px + env(safe-area-inset-top,0px));z-index:2;display:flex;justify-content:space-between;gap:16px;padding-inline:var(--gutter);font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--cream-dim);white-space:nowrap}
 @media (max-width:640px){.intro-top{font-size:10px;letter-spacing:.12em}}
 .scroll-cue{position:absolute;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--cream-dim);text-decoration:none;font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;animation:cue 2.4s ease-in-out infinite}
@@ -415,29 +416,35 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 </head>
 <body>
 
-<link rel="preload" href="img/intro-spin.webp" as="image" fetchpriority="high">
+<link rel="preload" href="img/intro-spin-a.webp" as="image" fetchpriority="high">
 <main>
 <section class="intro-reel" aria-label="Xantiva, Health Club Koh Phangan, Est 2021">
   <div class="intro-top" aria-hidden="false"><span>Rebranding proposal</span><span>Tal Rosmarin · Oct 2026</span></div>
   <div class="stage">
-    <img class="poster" src="img/intro-poster.webp" alt="" aria-hidden="true" fetchpriority="high" decoding="sync">
-    <canvas class="spin" width="240" height="285" aria-hidden="true"></canvas>
+    <img class="poster" src="img/intro-poster2.webp" alt="" aria-hidden="true" fetchpriority="high" decoding="sync">
+    <canvas class="spin" width="240" height="300" aria-hidden="true"></canvas>
     <script>
-    // Until the live 3D is ready, play the first two seconds of the exact same spin from a pre-rendered sprite,
-    // so on refresh the symbol is already turning at full speed. The 3D then takes over on the very frame shown.
+    // Until the live 3D is ready, play the same spin from a pre-rendered sprite. One full turn takes 5 seconds and the
+    // sprite holds all of it, so it loops with no seam and never stops; the 3D then takes over on the same clock.
     (function(){
       if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      var c=document.querySelector('.stage .spin'), x=c.getContext('2d'), im=new Image(), FPS=30, N=60, C=10, fw=240, fh=285;
-      window.__xSpin={fps:FPS,n:N,frame:0};
+      var c=document.querySelector('.stage .spin'), x=c.getContext('2d'), FPS=30, N=150, NA=40, C=10, fw=240, fh=300;
+      var A=new Image(), B=new Image(), bOk=false;
+      window.__xSpin={fps:FPS,n:N};
       function draw(){
         if(window.__xLive) return;
-        var i=Math.min(N-1,Math.floor((performance.now()-window.__xT0)/1000*FPS)); window.__xSpin.frame=i;
-        x.clearRect(0,0,fw,fh); x.drawImage(im,(i%C)*fw,Math.floor(i/C)*fh,fw,fh,0,0,fw,fh);
+        var now=performance.now(), i=Math.floor((now-window.__xT0)/1000*FPS)%N;
+        // the second half of the turn is still loading: hold the pose and shift the clock so the turn resumes without a jump
+        if(i>=NA&&!bOk){ i=NA-1; window.__xT0=now-(NA-1)/FPS*1000; }
+        var im=i<NA?A:B, k=i<NA?i:i-NA;
+        x.clearRect(0,0,fw,fh); x.drawImage(im,(k%C)*fw,Math.floor(k/C)*fh,fw,fh,0,0,fw,fh);
         requestAnimationFrame(draw);
       }
       function start(){ if(window.__xLive||window.__xT0) return; window.__xT0=performance.now(); draw(); c.parentNode.classList.add('spinning'); }
-      im.onload=function(){ (im.decode?im.decode():Promise.resolve()).then(start,start); };
-      im.src='img/intro-spin.webp';
+      A.onload=function(){ (A.decode?A.decode():Promise.resolve()).then(start,start); B.src='img/intro-spin-b.webp'; };
+      B.onload=function(){ (B.decode?B.decode():Promise.resolve()).then(function(){ bOk=true; },function(){ bOk=true; }); };
+      A.src='img/intro-spin-a.webp'; // the rest loads right after, so the first second gets the full connection
+      B.dataset.src='img/intro-spin-b.webp';
     })();
     </script>
     <canvas id="x3d" aria-hidden="true"></canvas>
@@ -995,17 +1002,20 @@ try {
   const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const draw = (t) => {
     pivot.rotation.y = (t / 10) * Math.PI * 4;
-    pivot.rotation.x = 0.12 * Math.sin((t / 10) * Math.PI * 2);
+    pivot.rotation.x = 0.12 * Math.sin((t / 10) * Math.PI * 4);
     pivot.position.y = 95 + 18 * Math.sin((t / 10) * Math.PI * 4);
     renderer.render(scene, cam);
   };
-  // take over on the exact frame the sprite is showing (or the poster pose), then keep turning at full speed
-  const sp = window.__xSpin, base = (sp && window.__xT0) ? sp.frame / sp.fps : 0;
-  window.__xLive = true;
-  draw(0.6 + base);
-  stage.classList.add('live');
-  const t0 = performance.now() - base * 1000;
-  if (!still) renderer.setAnimationLoop(() => { if (!window.__xPause) draw((0.6 + (performance.now() - t0) / 1000) % 10); });
+  // compile and draw once while the canvas is still hidden, so the swap itself never stalls
+  renderer.compile(scene, cam); draw(0.6);
+  requestAnimationFrame(() => {
+    // same clock as the sprite: the 3D picks up the exact pose on screen and keeps turning at full speed
+    const T0 = window.__xT0 || performance.now();
+    window.__xLive = true;
+    const tick = () => { if (!window.__xPause) draw(0.6 + ((performance.now() - T0) / 1000) % 5); };
+    tick(); stage.classList.add('live');
+    if (!still) renderer.setAnimationLoop(tick);
+  });
 } catch (e) { stage.classList.add('nogl'); }
 </script>
 </body>
