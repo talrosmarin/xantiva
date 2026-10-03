@@ -70,11 +70,11 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 /* the poster is the exact first frame of the 3D render, so on refresh the symbol is already there; the live canvas takes over on the same pose */
 .stage .poster{position:absolute;inset:0;width:100%;height:100%;display:block;pointer-events:none}
 /* only the live 3D canvas waits hidden; the sprite canvas must stay visible */
-.stage #x3d{opacity:0}
+.stage #x3d{opacity:0;transition:opacity .35s linear}
 .stage.live #x3d{opacity:1}
 .stage .spin{position:absolute;left:35.185%;top:32.8125%;width:29.63%;height:20.833%;display:none;pointer-events:none}
 .stage.spinning .spin{display:block}
-.stage.spinning .poster,.stage.live .poster,.stage.live .spin,.stage.nogl .poster,.stage.nogl .spin{display:none}
+.stage.spinning .poster,.stage.done .poster,.stage.done .spin,.stage.nogl .poster,.stage.nogl .spin{display:none}
 .stage-type{position:absolute;left:0;right:0;top:56.8%;text-align:center;color:var(--cream)}
 .st-wm{width:55.6cqw;margin:0 auto}
 .st-wm svg{width:100%;color:var(--cream)}
@@ -416,35 +416,38 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 </head>
 <body>
 
-<link rel="preload" href="img/intro-spin-a.webp" as="image" fetchpriority="high">
-<link rel="prefetch" href="img/intro-spin-b.webp">
+<link rel="preload" href="img/intro-spin2-a.webp" as="image" fetchpriority="high">
+<link rel="prefetch" href="img/intro-spin2-b.webp">
 <main>
 <section class="intro-reel" aria-label="Xantiva, Health Club Koh Phangan, Est 2021">
   <div class="intro-top" aria-hidden="false"><span>Rebranding proposal</span><span>Tal Rosmarin · Oct 2026</span></div>
   <div class="stage">
     <img class="poster" src="img/intro-poster2.webp" alt="" aria-hidden="true" fetchpriority="high" decoding="sync">
-    <canvas class="spin" width="240" height="300" aria-hidden="true"></canvas>
+    <canvas class="spin" width="320" height="400" aria-hidden="true"></canvas>
     <script>
     // Until the live 3D is ready, play the same spin from a pre-rendered sprite. One full turn takes 5 seconds and the
     // sprite holds all of it, so it loops with no seam and never stops; the 3D then takes over on the same clock.
     (function(){
       if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      var c=document.querySelector('.stage .spin'), x=c.getContext('2d'), FPS=30, N=150, NA=40, C=10, fw=240, fh=300;
+      var c=document.querySelector('.stage .spin'), x=c.getContext('2d'), FPS=30, N=150, NA=40, C=10, fw=320, fh=400;
       var A=new Image(), B=new Image(), bOk=false;
-      window.__xSpin={fps:FPS,n:N};
+      // one shared spin clock for the sprite and the 3D. Each frame adds at most 50ms, so when the phone is busy
+      // loading the 3D the turn just carries on from where it was instead of skipping ahead
+      var K=window.__xClock={t:0,last:0};
+      window.__xTick=function(now){ if(K.last) K.t+=Math.min(now-K.last,50)/1000; K.last=now; return K.t; };
       function draw(){
-        if(window.__xLive) return;
-        var now=performance.now(), i=Math.floor((now-window.__xT0)/1000*FPS)%N;
-        // the second half of the turn is still loading: hold the pose and shift the clock so the turn resumes without a jump
-        if(i>=NA&&!bOk){ i=NA-1; window.__xT0=now-(NA-1)/FPS*1000; }
+        if(window.__xDone) return;
+        var i=Math.floor(window.__xTick(performance.now())*FPS)%N;
+        // the second half of the turn is still loading: hold the pose until it arrives
+        if(i>=NA&&!bOk){ i=NA-1; K.t=(NA-1)/FPS; }
         var im=i<NA?A:B, k=i<NA?i:i-NA;
         x.clearRect(0,0,fw,fh); x.drawImage(im,(k%C)*fw,Math.floor(k/C)*fh,fw,fh,0,0,fw,fh);
         requestAnimationFrame(draw);
       }
-      function start(){ if(window.__xLive||window.__xT0) return; window.__xT0=performance.now(); draw(); c.parentNode.classList.add('spinning'); }
-      A.onload=function(){ (A.decode?A.decode():Promise.resolve()).then(start,start); B.src='img/intro-spin-b.webp'; };
+      function start(){ if(window.__xLive||K.last) return; K.last=performance.now(); draw(); c.parentNode.classList.add('spinning'); }
+      A.onload=function(){ (A.decode?A.decode():Promise.resolve()).then(start,start); B.src='img/intro-spin2-b.webp'; };
       B.onload=function(){ (B.decode?B.decode():Promise.resolve()).then(function(){ bOk=true; },function(){ bOk=true; }); };
-      A.src='img/intro-spin-a.webp'; // the rest loads right after, so the first second gets the full connection
+      A.src='img/intro-spin2-a.webp'; // the rest loads right after, so the first second gets the full connection
     })();
     </script>
     <canvas id="x3d" aria-hidden="true"></canvas>
@@ -1006,14 +1009,19 @@ try {
     pivot.position.y = 95 + 18 * Math.sin((t / 10) * Math.PI * 4);
     renderer.render(scene, cam);
   };
-  // compile and draw once while the canvas is still hidden, so the swap itself never stalls
-  renderer.compile(scene, cam); draw(0.6);
+  // compile the shaders in the background and draw once while the canvas is still hidden, so the swap never stalls
+  if (renderer.compileAsync) await renderer.compileAsync(scene, cam); else renderer.compile(scene, cam);
+  draw(0.6);
   requestAnimationFrame(() => {
     // same clock as the sprite: the 3D picks up the exact pose on screen and keeps turning at full speed
-    const T0 = window.__xT0 || performance.now();
+    const K = window.__xClock || (window.__xClock = { t: 0, last: 0 });
+    const clock = window.__xTick || ((now) => { if (K.last) K.t += Math.min(now - K.last, 50) / 1000; K.last = now; return K.t; });
     window.__xLive = true;
-    const tick = () => { if (!window.__xPause) draw(0.6 + ((performance.now() - T0) / 1000) % 5); };
+    const tick = () => { if (window.__xPause) { K.last = 0; return; } draw(0.6 + clock(performance.now()) % 5); };
+    // the 3D fades in over the sprite while both turn in sync, so no small step shows at the swap
+    if (!stage.classList.contains('spinning')) canvas.style.transition = 'none'; // still on the poster: same pose, swap at once
     tick(); stage.classList.add('live');
+    setTimeout(() => { window.__xDone = true; stage.classList.add('done'); }, 400);
     if (!still) renderer.setAnimationLoop(tick);
   });
 } catch (e) { stage.classList.add('nogl'); }
