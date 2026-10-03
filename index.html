@@ -707,23 +707,61 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 })();
 (function(){
   // radial gallery: the cards sit evenly around a big circle that is mostly below the fold and the circle turns on its own.
-  // The card passing the top is lit; it dims as it moves on and the next one lights up.
+  // Drag sideways to spin it either way (it carries on with the flick, then eases back to its own pace).
+  // Tap a card and it glides to the top and grows a little; tap it again, tap away or drag to let it go.
   var sec=document.getElementById('more'), wheel=document.getElementById('wheel'); if(!wheel) return;
   if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  var cards=[].slice.call(wheel.children), n=cards.length, STEP=360/n, SPEED=STEP/3.2, turn=0, live=false, lastT=performance.now(), t0=null;
-  function radius(){ return parseFloat(getComputedStyle(wheel.parentNode).getPropertyValue('--R'))||560; }
+  var wrap=wheel.parentNode, cards=[].slice.call(wheel.children), n=cards.length, STEP=360/n, SPEED=STEP/3.2;
+  var turn=0, spd=SPEED, live=false, lastT=performance.now(), t0=null, sel=-1, zoom=cards.map(function(){ return 0; }), drag=null;
+  function radius(){ return parseFloat(getComputedStyle(wrap).getPropertyValue('--R'))||560; }
   var R=radius(); addEventListener('resize',function(){ R=radius(); });
   function backOut(x){ var c=1.2, c3=c+1; return 1+c3*Math.pow(x-1,3)+c*Math.pow(x-1,2); }
+  function wrapA(a){ return ((a%360)+540)%360-180; }
   function paint(now){
     cards.forEach(function(c,i){
       var e=0; if(t0!==null){ var k=Math.min(1,Math.max(0,((now-t0)/1000-i*0.05)/1.2)); e=k>=1?1:Math.max(0,backOut(k)); }
-      var a=((i*STEP-turn)%360+540)%360-180, d=Math.abs(a)/STEP, lit=Math.max(0,1-d); lit=lit*lit*(3-2*lit);
-      c.style.transform='rotate('+a.toFixed(3)+'deg) translate3d(0,'+(-R)+'px,0) scale('+(e*(1+0.06*lit)).toFixed(4)+')';
-      c.style.setProperty('--lit',lit.toFixed(3));
-      c.style.zIndex=10+Math.round(lit*10);
+      var a=wrapA(i*STEP-turn), d=Math.abs(a)/STEP, lit=Math.max(0,1-d); lit=lit*lit*(3-2*lit);
+      var z=zoom[i];
+      c.style.transform='rotate('+a.toFixed(3)+'deg) translate3d(0,'+(-R-28*z).toFixed(1)+'px,0) scale('+(e*(1+0.06*lit+0.16*z)).toFixed(4)+')';
+      c.style.setProperty('--lit',Math.max(lit,z).toFixed(3));
+      c.style.zIndex=10+Math.round(lit*10)+Math.round(z*20);
     });
   }
-  function frame(now){ if(!live) return; var dt=Math.min(.05,(now-lastT)/1000); lastT=now; turn=(turn+SPEED*dt)%360; paint(now); requestAnimationFrame(frame); }
+  function frame(now){
+    if(!live) return; var dt=Math.min(.05,(now-lastT)/1000); lastT=now;
+    if(!drag){
+      if(sel>=0){ var off=wrapA(sel*STEP-turn); turn+=off*(1-Math.exp(-dt*6)); spd=0; }
+      else { spd+=(SPEED-spd)*(1-Math.exp(-dt*1.6)); turn+=spd*dt; }
+    }
+    turn=((turn%360)+360)%360;
+    for(var i=0;i<n;i++) zoom[i]+=((i===sel?1:0)-zoom[i])*(1-Math.exp(-dt*8));
+    paint(now); requestAnimationFrame(frame);
+  }
+  wrap.style.touchAction='pan-y';
+  wrap.addEventListener('pointerdown',function(e){
+    drag={id:e.pointerId,x:e.clientX,y:e.clientY,last:e.clientX,t:performance.now(),start:performance.now(),v:0,moved:0,cap:false};
+  });
+  wrap.addEventListener('pointermove',function(e){
+    if(!drag||drag.id!==e.pointerId) return;
+    var dx=e.clientX-drag.last, now=performance.now();
+    drag.moved=Math.max(drag.moved,Math.abs(e.clientX-drag.x));
+    if(drag.moved<6) return;
+    if(!drag.cap){ drag.cap=true; try{ wrap.setPointerCapture(e.pointerId); }catch(_){} sel=-1; }
+    var deg=-dx/R*180/Math.PI; turn+=deg;
+    var dt=Math.max(1,now-drag.t); drag.v=drag.v*0.6+(deg/dt*1000)*0.4; drag.t=now; drag.last=e.clientX;
+  });
+  function end(e){
+    if(!drag||drag.id!==e.pointerId) return; var d=drag; drag=null;
+    if(d.moved<6&&performance.now()-d.start<450){
+      var hit=document.elementFromPoint(e.clientX,e.clientY); hit=hit&&hit.closest('.wcard');
+      var i=cards.indexOf(hit); sel=(i<0||i===sel)?-1:i; if(sel<0) spd=0;
+      return;
+    }
+    spd=Math.max(-400,Math.min(400,d.v));
+  }
+  wrap.addEventListener('pointerup',end); wrap.addEventListener('pointercancel',end);
+  cards.forEach(function(c){ c.style.cursor='pointer'; });
+  wrap.style.cursor='grab';
   new IntersectionObserver(function(en){ var v=en[0].isIntersecting; if(v&&t0===null) t0=performance.now(); if(v&&!live){ live=true; lastT=performance.now(); requestAnimationFrame(frame); } live=v; },{threshold:0.1}).observe(sec);
   paint(performance.now());
 })();
