@@ -158,7 +158,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 .cf-card{position:absolute;left:50%;top:0;width:var(--cf-card);aspect-ratio:4/5;margin:0;border-radius:16px;overflow:hidden;background:var(--green-deep);border:1px solid var(--cream-line);box-shadow:0 30px 60px -25px rgba(0,0,0,.6);will-change:transform,opacity}
 .cf-card img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
 .cf-card.story img{object-fit:contain}
-#merch-track .slide{cursor:zoom-in}
+#merch-stack .slide{cursor:inherit}
 .cf-ui{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:4px}
 .cf-mid{display:flex;flex-direction:column;align-items:center;gap:12px}
 .cf-cap{margin:0;font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--cream)}
@@ -177,13 +177,13 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 .tee-grid figure{position:relative}
 .tee-grid img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:4px}
 
-/* merch carousel: swipe sideways, the next photo peeks in as a teaser */
-.carousel{margin-top:clamp(40px,5vw,72px);margin-right:calc((100% - 100vw) / 2)}
-.track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-left:0;padding-right:var(--gutter);scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
-.track::-webkit-scrollbar{display:none}
-.slide{position:relative;flex:0 0 clamp(260px,38%,460px);scroll-snap-align:start}
-.slide img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:6px;display:block}
-.car-ui{display:flex;justify-content:space-between;align-items:center;margin-top:18px;padding-right:var(--gutter)}
+/* merch: a stacked deck. Drag or use the arrows; the side cards fan out, tilt and dim. Tap the front card to open it */
+.stack{--sw:clamp(200px,24vw,320px);position:relative;height:calc(var(--sw) * 1.25 + clamp(110px,12vw,170px));margin-top:clamp(40px,5vw,72px);display:grid;place-items:center;overflow:hidden;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none;outline:none}
+.stack.drag{cursor:grabbing}
+.slide{position:absolute;left:50%;top:50%;width:var(--sw);aspect-ratio:4/5;margin:calc(var(--sw) * -0.625) 0 0 calc(var(--sw) * -0.5);border-radius:16px;overflow:hidden;background:var(--cream);box-shadow:0 24px 50px -24px rgba(31,46,36,.45);will-change:transform,opacity}
+.slide img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.slide i{position:absolute;inset:0;background:#16221A;opacity:0;pointer-events:none}
+.car-ui{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
 .hint{font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-dim);display:flex;align-items:center;gap:10px}
 .hint::after{content:"";width:36px;height:1px;background:currentColor}
 .car-btns{display:flex;gap:8px}
@@ -191,7 +191,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 .car-btn:hover{background:rgba(31,46,36,.06)}
 .car-btn,.cf-dots button{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
 .slide .tag{background:var(--green);color:var(--cream)}
-@media (max-width:860px){.slide{flex-basis:80%}.car-btns{display:none}}
+@media (max-width:640px){.stack{--sw:200px;height:410px;margin-inline:calc(var(--gutter) * -1)}}
 /* 04 creative: the four posts as they go out */
 .posts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(10px,1.4vw,18px);margin-top:clamp(40px,5vw,72px)}
 .post{display:flex;flex-direction:column;gap:12px;min-width:0}
@@ -527,17 +527,15 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
       <h2>Merch</h2>
       <p class="lede">Pieces members actually want to wear, in the gym and around the island.</p>
     </div>
-    <div class="carousel">
-      <div class="track" id="merch-track" tabindex="0" aria-label="Merch, swipe to see more">
-      <figure class="slide"><img src="img/merch-c-tank.jpg" alt="Black training tank with the Xantiva symbol and wordmark on the chest" loading="lazy"><span class="tag">Training tank</span></figure>
-      <figure class="slide"><img src="img/merch-c-bottle.jpg" alt="Green water bottle with the Xantiva symbol and wordmark" loading="lazy"><span class="tag">Water bottle</span></figure>
-      <figure class="slide"><img src="img/merch-c-cap2.jpg" alt="Dark running cap with the Xantiva symbol" loading="lazy"><span class="tag">Running cap</span></figure>
-      <figure class="slide"><img src="img/merch-c-sauna.jpg" alt="Green felt sauna hat with the Xantiva symbol" loading="lazy"><span class="tag">Sauna hat</span></figure>
-      <figure class="slide"><img src="img/merch-c-shaker.jpg" alt="Black shaker with the Xantiva wordmark" loading="lazy"><span class="tag">Shaker</span></figure>
-      <figure class="slide"><img src="img/merch-c-towel.jpg" alt="Green gym towel with the Xantiva symbol" loading="lazy"><span class="tag">Gym towel</span></figure>
-      </div>
-      <div class="car-ui"><span class="hint">Swipe</span><div class="car-btns"><button type="button" class="car-btn" data-dir="-1" aria-label="Previous"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button type="button" class="car-btn" data-dir="1" aria-label="Next"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div></div>
+    <div class="stack" id="merch-stack" tabindex="0" role="region" aria-roledescription="carousel" aria-label="Merch, drag or use the arrows">
+      <figure class="slide"><img src="img/merch-c-tank.jpg" alt="Black training tank with the Xantiva symbol and wordmark on the chest" draggable="false"><i></i><span class="tag">Training tank</span></figure>
+      <figure class="slide"><img src="img/merch-c-bottle.jpg" alt="Green water bottle with the Xantiva symbol and wordmark" draggable="false"><i></i><span class="tag">Water bottle</span></figure>
+      <figure class="slide"><img src="img/merch-c-cap2.jpg" alt="Dark running cap with the Xantiva symbol" draggable="false"><i></i><span class="tag">Running cap</span></figure>
+      <figure class="slide"><img src="img/merch-c-sauna.jpg" alt="Green felt sauna hat with the Xantiva symbol" draggable="false"><i></i><span class="tag">Sauna hat</span></figure>
+      <figure class="slide"><img src="img/merch-c-shaker.jpg" alt="Black shaker with the Xantiva wordmark" draggable="false"><i></i><span class="tag">Shaker</span></figure>
+      <figure class="slide"><img src="img/merch-c-towel.jpg" alt="Green gym towel with the Xantiva symbol" draggable="false"><i></i><span class="tag">Gym towel</span></figure>
     </div>
+    <div class="car-ui"><span class="hint">Drag</span><div class="car-btns"><button type="button" class="car-btn" data-dir="-1" aria-label="Previous"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><button type="button" class="car-btn" data-dir="1" aria-label="Next"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button></div></div>
   </div>
 </section>
 
@@ -953,15 +951,50 @@ toTop(); addEventListener('pageshow',toTop); addEventListener('load',function(){
   fit(); if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fit); addEventListener('resize',fit);
 })();
 (function(){
-  var lb=document.getElementById('lightbox'), track=document.getElementById('merch-track'); if(!lb||!track) return;
-  [].forEach.call(track.querySelectorAll('.slide'),function(f){ f.addEventListener('click',function(){ var im=f.querySelector('img'); lb.querySelector('img').src=im.src; lb.querySelector('img').alt=im.alt; lb.hidden=false; }); });
-})();
-(function(){
-  var t=document.getElementById('merch-track'); if(!t) return;
-  document.querySelectorAll('.car-btn').forEach(function(b){ b.addEventListener('click',function(){
-    var w=t.querySelector('.slide').getBoundingClientRect().width+12;
-    t.scrollBy({left:w*Number(b.getAttribute('data-dir')),behavior:'smooth'});
-  }); });
+  // stacked merch deck: one progress value drives every card (offset from the front -> x, y, tilt, scale, dim)
+  var root=document.getElementById('merch-stack'); if(!root) return;
+  var cards=[].slice.call(root.querySelectorAll('.slide')), n=cards.length, lb=document.getElementById('lightbox');
+  var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var p=0, v=0, target=0, raf=null, drag=null, cfg;
+  function conf(){ var w=innerWidth, sw=cards[0].offsetWidth||260;
+    cfg=w<640?{x:.5,y:20,rot:8,sc:.06,sens:180,dist:120,vel:500}:(w<1024?{x:.52,y:30,rot:10,sc:.09,sens:220,dist:160,vel:650}:{x:.56,y:40,rot:12,sc:.12,sens:250,dist:200,vel:800});
+    cfg.x*=sw; }
+  function off(i){ var d=(i-p)%n; if(d>n/2) d-=n; if(d<-n/2) d+=n; return d; }
+  function paint(){
+    cards.forEach(function(c,i){
+      var o=off(i), a=Math.abs(o), flat=a<.05;
+      var op=a>n/2-.5?Math.max(0,(n/2-a)*2):1;
+      c.style.transform='translate('+(o*cfg.x).toFixed(1)+'px,'+(flat?0:a*cfg.y).toFixed(1)+'px) rotate('+(flat?0:o*cfg.rot).toFixed(2)+'deg) scale('+(1-a*cfg.sc).toFixed(4)+')';
+      c.style.opacity=op.toFixed(3); c.style.zIndex=Math.round(100-a*10);
+      c.querySelector('i').style.opacity=Math.min(.5,a<.5?a*.4:.2+(a-.5)*.2).toFixed(3);
+    });
+  }
+  // spring like the original (stiffness 200, damping 30, mass 1)
+  function spring(){ if(raf) cancelAnimationFrame(raf); var last=performance.now();
+    if(still){ p=target; v=0; paint(); return; }
+    (function step(now){ var dt=Math.min(.032,(now-last)/1000); last=now;
+      v+=(200*(target-p)-30*v)*dt; p+=v*dt; paint();
+      if(Math.abs(target-p)<.0005&&Math.abs(v)<.001){ p=target; v=0; paint(); raf=null; return; }
+      raf=requestAnimationFrame(step); })(last);
+  }
+  function go(t){ target=t; spring(); }
+  root.addEventListener('pointerdown',function(e){ if(raf){ cancelAnimationFrame(raf); raf=null; } v=0;
+    drag={id:e.pointerId,x0:e.clientX,x:e.clientX,start:p,t:performance.now(),vx:0,moved:0}; root.setPointerCapture(e.pointerId); root.classList.add('drag'); });
+  root.addEventListener('pointermove',function(e){ if(!drag||drag.id!==e.pointerId) return;
+    var dx=e.clientX-drag.x, now=performance.now(); drag.vx=dx/Math.max(.008,(now-drag.t)/1000); drag.t=now; drag.x=e.clientX;
+    drag.moved=Math.max(drag.moved,Math.abs(e.clientX-drag.x0)); p-=dx/cfg.sens; paint(); });
+  function end(e){ if(!drag||drag.id!==e.pointerId) return; var d=drag; drag=null; root.classList.remove('drag');
+    if(d.moved<6){ // a tap: open the front card, or bring a side card to the front
+      var hit=document.elementsFromPoint(e.clientX,e.clientY).filter(function(el){ return el.classList&&el.classList.contains('slide'); })[0], i=cards.indexOf(hit);
+      if(i>=0&&Math.abs(off(i))<.5&&lb){ var im=hit.querySelector('img'); lb.querySelector('img').src=im.src; lb.querySelector('img').alt=im.alt; lb.hidden=false; go(Math.round(p)); return; }
+      if(i>=0){ go(Math.round(p)+Math.round(off(i))); return; }
+    }
+    var shift=Math.round(-(d.x-d.x0)/cfg.dist - d.vx/cfg.vel); shift=Math.max(-3,Math.min(3,shift));
+    go(Math.round(d.start)+shift); }
+  root.addEventListener('pointerup',end); root.addEventListener('pointercancel',end);
+  root.addEventListener('keydown',function(e){ if(e.key==='ArrowLeft'){ e.preventDefault(); go(Math.round(target)-1); } else if(e.key==='ArrowRight'){ e.preventDefault(); go(Math.round(target)+1); } });
+  root.parentNode.querySelectorAll('.car-btns .car-btn').forEach(function(b){ b.addEventListener('click',function(){ go(Math.round(target)+Number(b.getAttribute('data-dir'))); }); });
+  addEventListener('resize',function(){ conf(); paint(); }); conf(); paint();
 })();
 (function(){
   var b=document.getElementById('copy-email');
