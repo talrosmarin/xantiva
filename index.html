@@ -258,7 +258,8 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 .times{display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,.55);margin-top:8px;font-variant-numeric:tabular-nums}
 .ctrls{display:flex;justify-content:center;align-items:center;gap:30px;margin-top:4px}
 .ctrls svg{transform:scale(.82)}
-.c-btn{background:none;border:0;color:#fff;padding:6px;cursor:pointer;display:grid;place-items:center;border-radius:50%}
+.c-btn{background:none;border:0;color:#fff;padding:6px;cursor:pointer;display:grid;place-items:center;border-radius:50%;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}
+.player{touch-action:manipulation;-webkit-user-select:none;user-select:none}
 .c-btn:active{transform:scale(.92)}
 .c-btn.play .i-play{display:none}
 .player.paused .c-btn.play .i-play{display:block}
@@ -518,10 +519,8 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
     <div class="carousel">
       <div class="track" id="merch-track" tabindex="0" aria-label="Merch, swipe to see more">
       <figure class="slide"><img src="img/merch-c-tank.jpg" alt="Black training tank with the Xantiva symbol and wordmark on the chest" loading="lazy"><span class="tag">Training tank</span></figure>
-      <figure class="slide"><img src="img/merch-c-tote.jpg" alt="Off-white canvas tote bag with the green Xantiva symbol" loading="lazy"><span class="tag">Tote bag</span></figure>
       <figure class="slide"><img src="img/merch-c-bottle.jpg" alt="Green water bottle with the Xantiva symbol and wordmark" loading="lazy"><span class="tag">Water bottle</span></figure>
       <figure class="slide"><img src="img/merch-c-cap.jpg" alt="Dark running cap with the Xantiva symbol" loading="lazy"><span class="tag">Running cap</span></figure>
-      <figure class="slide"><img src="img/merch-c-beach.jpg" alt="Off-white beach towel with the green Xantiva symbol" loading="lazy"><span class="tag">Beach towel</span></figure>
       <figure class="slide"><img src="img/merch-c-sauna.jpg" alt="Green felt sauna hat with the Xantiva symbol" loading="lazy"><span class="tag">Sauna hat</span></figure>
       <figure class="slide"><img src="img/merch-c-shaker.jpg" alt="Black shaker with the Xantiva wordmark" loading="lazy"><span class="tag">Shaker</span></figure>
       <figure class="slide"><img src="img/merch-c-towel.jpg" alt="Green gym towel with the Xantiva symbol" loading="lazy"><span class="tag">Gym towel</span></figure>
@@ -704,6 +703,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
   $('pl-next').addEventListener('click',function(){ load(cur+1); });
   $('pl-prev').addEventListener('click',function(){ if(pos>3){ pos=0; show(); } else load(cur-1); });
   lis.forEach(function(li,k){ li.querySelector('button').addEventListener('click',function(){ load(k); }); });
+  pl.addEventListener('dblclick',function(e){ e.preventDefault(); });
   if(!playing) pl.classList.add('paused');
   lis[0].classList.add('on'); show(); requestAnimationFrame(tick);
 })();
