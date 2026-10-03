@@ -417,6 +417,7 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
 <body>
 
 <link rel="preload" href="img/intro-spin-a.webp" as="image" fetchpriority="high">
+<link rel="prefetch" href="img/intro-spin-b.webp">
 <main>
 <section class="intro-reel" aria-label="Xantiva, Health Club Koh Phangan, Est 2021">
   <div class="intro-top" aria-hidden="false"><span>Rebranding proposal</span><span>Tal Rosmarin · Oct 2026</span></div>
@@ -444,7 +445,6 @@ p{margin:0;max-width:56ch;text-wrap:pretty}
       A.onload=function(){ (A.decode?A.decode():Promise.resolve()).then(start,start); B.src='img/intro-spin-b.webp'; };
       B.onload=function(){ (B.decode?B.decode():Promise.resolve()).then(function(){ bOk=true; },function(){ bOk=true; }); };
       A.src='img/intro-spin-a.webp'; // the rest loads right after, so the first second gets the full connection
-      B.dataset.src='img/intro-spin-b.webp';
     })();
     </script>
     <canvas id="x3d" aria-hidden="true"></canvas>
